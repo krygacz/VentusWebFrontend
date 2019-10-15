@@ -5,4 +5,10 @@ Vue.config.productionTip = false
 
 new Vue({
   render: h => h(App),
+  data: {
+    profile: {
+      name: 'Krystian',
+      img: 'img.png'
+    }
+  }
 }).$mount('#app')
