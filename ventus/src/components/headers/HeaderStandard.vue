@@ -2,7 +2,7 @@
     <div class="header" id="header">
         <div v-on:click="$emit('header-event-menu')" id="menu"><i class="material-icons">menu</i></div>
         <img id="logo" src="@/assets/logo.svg" />
-        <div v-on:click="$emit('header-event-profile')" id="profile" ><img :src="profile.img" /><p>{{profile.name}}</p></div>
+        <div v-on:click="$emit('header-event-profile')" id="profile_link" ><img :src="profile.picture" /><p>{{profile.first_name}}</p></div>
     </div>
 </template>
 
@@ -52,7 +52,7 @@ export default {
     .header > div#menu:hover{
         transform:scale(1.2);
     }
-    .header > #profile{
+    .header > #profile_link{
         display:flex;
         flex-flow: row nowrap;
         align-items: center;
@@ -60,16 +60,16 @@ export default {
         transition:all 300ms ease-in-out;
         cursor:pointer;
     }
-    .header > #profile:hover{
+    .header > #profile_link:hover{
         transform: scale(1.1);
     }
-    .header > #profile > img{
+    .header > #profile_link > img{
         display:block;
         border-radius: 100%;
         width: 35px;
         height: 35px;
     }
-    .header > #profile > p{
+    .header > #profile_link > p{
         display:inline-block;
         margin:0;
         padding:0;

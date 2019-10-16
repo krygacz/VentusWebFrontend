@@ -9,5 +9,12 @@ module.exports = {
             `
           }
         }
+      },
+      devServer: {
+        open: process.platform === 'darwin',
+        host: 'localhost',
+        port: 80,
+        https: true,
+        hotOnly: false,
       }
 }
