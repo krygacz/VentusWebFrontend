@@ -9,13 +9,13 @@
                     :total-steps="100"
                     :innerStrokeColor="'#dddddd00'"
                     :strokeWidth="9"
-                    :startColor="(user.percentage>35)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'"
-                    :stopColor="(user.percentage>35)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'">
-                        <img src="/im.jpg" />
+                    :startColor="(user.percentage>40)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'"
+                    :stopColor="(user.percentage>40)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'">
+                        <img :src="user.picture" />
                 </radial-progress-bar>
-                <h1>Piast Bulgocki</h1>
-                <h2>Góry Sowie, Poland</h2>
-                <h3>24 lata</h3>
+                <h1>{{user.first_name + ' ' + user.last_name}}</h1>
+                <h2>{{user.location}}</h2>
+                <h3>Lat {{user.age}}</h3>
                 <button id="contact">Wyślij prośbę o kontakt</button>
             </div>
             <div class="hobbies">
@@ -46,23 +46,26 @@ export default {
     },
     data(){           
         return{
-            user:{
-                percentage:70,
-                hobbies:[
-                        {
-                            id:0,
-                            name:'Pink Floyd',
-                            percentage:55
-                        },
-                        {
-                            id:1,
-                            name:'Pink Floyd',
-                            percentage:78
-                        }
-                    ]
-            },
+            user:{},
             errored:false
         }
+    },
+    mounted(){
+        this.$emit('load', true);
+        var that = this;
+        this.axios.get('/profile/' + this.$route.params.id)
+                .then((response) => {
+                    if(response.status != 200) {
+                        that.$emit('error', 'status ' + response.status);
+                    }
+                    if(response.data.user){
+                        that.user = Object.assign({}, response.data, that.user);
+                    }else that.$emit('error', 'no data received');
+                })
+                .catch((e) => {
+                    that.$emit('error', e.message);
+                })
+                .finally(function(){that.$emit('load', false);})
     }
 }
 </script>

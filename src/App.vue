@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <div class="error-container" v-if="errored"><div class="error">ERROROORORR</div></div>
+    <div class="error-container" v-if="errored"><div class="error">THERE WAS AN ERROR<br><br><span>{{errormsg}}</span></div></div>
     <transition name="fade">
       <div class="loader-container" v-if="loading"><div class="loader"></div></div>
     </transition>
-    <router-view  v-model="loading" :profile="profile"> </router-view>
+    <router-view  v-on:error="errorHandle" v-if="!errored && ready" v-model="loading" :profile="profile"> </router-view>
   </div>
 </template>
 
@@ -14,27 +14,38 @@ export default {
   data(){
     return{
       errored:false,
+      errormsg:'',
       loading:true,
+      ready:false,
       profile:{}
+    }
+  },
+  methods:{
+    errorHandle: function(e) {
+      this.errormsg = e;
+      this.errored = true;
     }
   },
   mounted(){
     this.axios.get('/user')
       .then((response) => {
         if(response.status != 200) {
-          alert("backend be trippinn\n\nstatus " + response.status + "\n\n" + JSON.stringify(response.data));
-          this.errored = true;
+          this.errorHandle('status ' + response.status);
         }
-        if(!response.data)throw new Error('gOt nO dAtA');
+        if(!response.data) this.errorHandle('no data received');
         if(!response.data.User){this.$router.push({name:'login'})}
         else if(!response.data.User.initialized){this.$router.push('/setup')}
         this.profile = Object.assign({}, response.data, this.profile);
       })
       .catch((e) => {
-        this.errored = true;
-        alert("backend be trippin\n\n" + e.message);
+        this.errorHandle(e.message);
       })
-      .finally(() => {this.loading = false;})
+      .finally(() => {this.ready = true; this.loading = false;})
+  },
+  // eslint-disable-next-line
+  beforeRouteUpdate (a,b,next) {
+    this.errored = false;
+    next();
   }
 }
 </script>
@@ -65,11 +76,17 @@ export default {
   background:#B71C1C;
 }
 .error-container .error{
+  text-align:center;
   font-size: 60px;
   font-weight:700;
   color:white;
   opacity:0.4;
+  word-wrap: normal;
   user-select:none;
+}
+.error span{
+  font-size:40px;
+  font-weight:400;
 }
 .loader {
   width: 64px;
@@ -96,8 +113,8 @@ export default {
 }
 .fade-enter-active, .fade-leave-active {
   opacity:1;
-  transition: all 200ms ease-in-out;
-  transition-delay:100ms;
+  transition: opacity 200ms ease-in-out;
+  transition-delay:200ms;
 }
 .fade-enter, .fade-leave-to{
   opacity: 0;

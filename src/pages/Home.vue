@@ -33,14 +33,14 @@ export default {
         this.axios.get('/user/recommendations')
                 .then((response) => {
                     if(response.status != 200) {
-                        alert("status " + response.status);
+                        that.$emit('error', 'status ' + response.status);
                     }
                     if(response.data.recommendations){
                         this.recommendations = Object.assign({}, response.data, this.recommendations);
-                    }else throw new Error;
+                    }else that.$emit('error', 'no data received');
                 })
-                .catch(() => {
-                    this.errored = true;
+                .catch((e) => {
+                    that.$emit('error', e.message);
                 })
                 .finally(function(){that.$emit('load', false);})
     }
