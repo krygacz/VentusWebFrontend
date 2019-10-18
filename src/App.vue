@@ -26,7 +26,7 @@ export default {
           this.errored = true;
         }
         if(!response.data)throw new Error('gOt nO dAtA');
-        if(!response.data.User){this.$router.push('login')}
+        if(!response.data.User){this.$router.push({name:'login'})}
         else if(!response.data.User.initialized){this.$router.push('/setup')}
         this.profile = Object.assign({}, response.data, this.profile);
       })

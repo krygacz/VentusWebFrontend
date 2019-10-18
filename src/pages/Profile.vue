@@ -4,14 +4,14 @@
         <div class="profile-container">
             <div class="details">
                 <radial-progress-bar class="circle"
-                        :diameter="140"
-                       :completed-steps="user.percentage"
-                       :total-steps="100"
-                       :innerStrokeColor="'#dddddd00'"
-                       :strokeWidth="9"
-                       :startColor="(user.percentage>35)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'"
-                       :stopColor="(user.percentage>35)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'">
-                    <img src="@/assets/im.jpg" />
+                    :diameter="140"
+                    :completed-steps="user.percentage"
+                    :total-steps="100"
+                    :innerStrokeColor="'#dddddd00'"
+                    :strokeWidth="9"
+                    :startColor="(user.percentage>35)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'"
+                    :stopColor="(user.percentage>35)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'">
+                        <img src="/im.jpg" />
                 </radial-progress-bar>
                 <h1>Piast Bulgocki</h1>
                 <h2>Góry Sowie, Poland</h2>
@@ -44,9 +44,23 @@ export default {
         prop: 'loading',
         event:'load'
     },
-    data(){
+    data(){           
         return{
-            user:{percentage:70},
+            user:{
+                percentage:70,
+                hobbies:[
+                        {
+                            id:0,
+                            name:'Pink Floyd',
+                            percentage:55
+                        },
+                        {
+                            id:1,
+                            name:'Pink Floyd',
+                            percentage:78
+                        }
+                    ]
+            },
             errored:false
         }
     }
@@ -56,9 +70,9 @@ export default {
 <style lang="scss">
 .profile-container{
     display:flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     align-items: center;
-    justify-content:space-between;
+    justify-content:center;
     position:absolute;
     top:0;
     left:0;
@@ -67,28 +81,54 @@ export default {
     padding:50px;
     padding-top:100px;
 }
-.profile-container > .details{
+.profile-container > .details, .profile-container > .hobbies{
     width:50%;
+    box-sizing:border-box;
     height:100%;
     display:flex;
     flex-flow:column nowrap;
-    align-content: flex-start;
-    justify-content: center;
+    align-items:center;
+    align-content:center;
+    justify-items: center;
+    justify-content:center;
+    flex-shrink:0;
+    min-width:250px;
+}
+.profile-container > .hobbies{
+    padding:20px;
+    padding-left:40px;
+    padding-top:30px;
+    align-items:center;
+    align-content:center;
+    justify-items: flex-start;
+    justify-content:flex-start;
+}
+.hobbies > .progressbar{
+    width:90%;
+    box-sizing: border-box;
+    display:flex;
+    flex-direction:row nowrap;
+    justify-content:space-between;
+    align-items:center;
+    padding: 7px 0px 7px 0px;
 }
 .progressbar > .label{
     padding:0;
     margin:0;
-    margin-top:-2px;
-    font-size:14px;
+    margin-top:-4px;
+    color:$primary_darker;
+    font-size:18px;
+    font-weight:400;
+    font-family:'Segoe UI';
 }
 .progressbar > .progress-container{
-    width:50%;
-    height:9px;
+    width:60%;
+    height:12px;
     justify-self:flex-end;
-    border-bottom-left-radius:9px 100%;
-    border-top-left-radius:9px 100%;
-    border-bottom-right-radius:9px 100%;
-    border-top-right-radius:9px 100%;
+    border-bottom-left-radius:12px 100%;
+    border-top-left-radius:12px 100%;
+    border-bottom-right-radius:12px 100%;
+    border-top-right-radius:12px 100%;
     overflow:hidden;
 }
 .progressbar > .progress-container::before{
@@ -119,10 +159,9 @@ export default {
 .high .progress-container::before, .high .progress-value{
     background-color: $accent_teal;
 }
+
 .circle{
-    justify-self:flex-start;
-    align-self:flex-start;
-    margin:auto;
+    margin-bottom:8px;
 }
 .circle img{
     border-radius:50%;
@@ -138,35 +177,49 @@ export default {
     padding:0;
 }
 h1,h2,h3{
-    align-self:flex-start;
-    justify-self:flex-start;
-    margin: auto;
+    margin: 0 auto;
     font-family:'Segoe UI';
     display:inline-block;
     text-align: center;
 }
 .details h1{
-    color:$primary_dark;
-    font-size:36px;
+    color:$primary_darker;
+    font-size:35px;
+    font-weight:700;
 }
 .details h2{
+    color: $primary_dark;
     font-weight:400;
-    font-size: 20px;
-
+    font-size: 17px;
+    margin-top:6px;
 }
 .details h3{
+    color: $primary_light;
     font-weight:300;
-    font-size:18px;
+    font-size:17px;
 }
 .details #contact{
-    align-self:center;
-    justify-self: center;
+    margin: 0;
+    margin-top:15%;
+    display:block;
     text-decoration: none;
-    padding:15px;
+    padding:8px;
     border:none;
     border-radius:80px;
-    height:50px;
-    width:300px;
-    background:$primary_light;
+    height:42px;
+    min-height:42px;
+    width:100%;
+    max-width:430px;
+    background:$primary_dark;
+    color:white;
+    font-family: 'Segoe UI';
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 200ms ease-in-out;
 }
+.details #contact:hover{
+    transform:scale(1.07);
+}
+
 </style>

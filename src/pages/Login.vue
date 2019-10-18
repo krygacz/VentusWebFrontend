@@ -23,7 +23,7 @@ export default {
                     if(response.status != 200) {
                         alert("status " + response.status);
                     }
-                    if(response.data.user){that.$router.push('home')}
+                    if(response.data.user){that.$router.push({name:'home'})}
                 })
                 .catch(() => {
                     this.errored = true;
