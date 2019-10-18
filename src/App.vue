@@ -19,7 +19,7 @@ export default {
     }
   },
   mounted(){
-    this.axios.get('https://ventusapi.herokuapp.com/api/user/')
+    this.axios.get('/user')
       .then((response) => {
         if(response.status != 200) {
           alert("backend be trippinn\n\nstatus " + response.status + "\n\n" + JSON.stringify(response.data));

@@ -30,7 +30,7 @@ export default {
     mounted(){
         this.$emit('load', true);
         var that = this;
-        this.axios.get('https://ventusapi.herokuapp.com/api/user/recommendations')
+        this.axios.get('/user/recommendations')
                 .then((response) => {
                     if(response.status != 200) {
                         alert("status " + response.status);

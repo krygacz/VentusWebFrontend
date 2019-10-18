@@ -10,6 +10,7 @@ import ProfilePage from './pages/Profile.vue';
 
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
+Vue.axios.defaults.baseURL = "https://ventusapi.herokuapp.com/api";
 
 Vue.config.productionTip = false;
 

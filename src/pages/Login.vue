@@ -18,7 +18,7 @@ export default {
     methods:{
         checkLogin: function(){
             var that = this;
-            this.axios.get('https://ventusapi.herokuapp.com/api/user/')
+            this.axios.get('/user')
                 .then((response) => {
                     if(response.status != 200) {
                         alert("status " + response.status);
@@ -33,7 +33,7 @@ export default {
         login: function(){
             var that = this;
             this.$emit('load', true);
-            let w = window.open("https://ventusapi.herokuapp.com/api/connect/facebook/");
+            let w = window.open("https://ventusapi.herokuapp.com/connect/facebook/");
             var timer = setInterval(function() { 
                 if(w.closed) {
                     clearInterval(timer);
