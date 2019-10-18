@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <h1 style="font-size:150px;color:red;" v-if="errored">ERROROORORR</h1>
+    <div class="error-container" v-if="errored"><div class="error">ERROROORORR</div></div>
     <transition name="fade">
-    <div class="loader_container" v-if="loading"><div class="loader"></div></div>
+      <div class="loader-container" v-if="loading"><div class="loader"></div></div>
     </transition>
-    <router-view v-if="!errored" v-model="loading" :profile="profile"> </router-view>
+    <router-view  v-model="loading" :profile="profile"> </router-view>
   </div>
 </template>
 
@@ -19,10 +19,10 @@ export default {
     }
   },
   mounted(){
-    this.axios.get('https://ventusapi.herokuapp.com/user/')
+    this.axios.get('https://ventusapi.herokuapp.com/api/user/')
       .then((response) => {
         if(response.status != 200) {
-          alert("backend be trippin\n\nstatus " + response.status + "\n\n" + JSON.stringify(response.data));
+          alert("backend be trippinn\n\nstatus " + response.status + "\n\n" + JSON.stringify(response.data));
           this.errored = true;
         }
         if(!response.data)throw new Error('gOt nO dAtA');
@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.loader_container{
+.loader-container{
   position:fixed;
   top:0;
   left:0;
@@ -51,6 +51,25 @@ export default {
   justify-content:center;
   z-index:99999999;
   background:white;
+}
+.error-container{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:-1;
+  background:#B71C1C;
+}
+.error-container .error{
+  font-size: 60px;
+  font-weight:700;
+  color:white;
+  opacity:0.4;
+  user-select:none;
 }
 .loader {
   width: 64px;

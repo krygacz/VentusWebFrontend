@@ -18,12 +18,12 @@ export default {
     methods:{
         checkLogin: function(){
             var that = this;
-            this.axios.get('https://ventusapi.herokuapp.com/connect/facebook')
+            this.axios.get('https://ventusapi.herokuapp.com/api/user/')
                 .then((response) => {
                     if(response.status != 200) {
                         alert("status " + response.status);
                     }
-                    if(response.data.logged_in){that.$router.push('home')}
+                    if(response.data.user){that.$router.push('home')}
                 })
                 .catch(() => {
                     this.errored = true;
@@ -33,7 +33,7 @@ export default {
         login: function(){
             var that = this;
             this.$emit('load', true);
-            let w = window.open("https://facebook.com");
+            let w = window.open("https://ventusapi.herokuapp.com/api/connect/facebook/");
             var timer = setInterval(function() { 
                 if(w.closed) {
                     clearInterval(timer);
