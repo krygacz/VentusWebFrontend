@@ -8,6 +8,7 @@ import HomePage from './pages/Home.vue';
 import LoginPage from './pages/Login.vue';
 import ProfilePage from './pages/Profile.vue';
 import RegisterPage from './pages/Register.vue';
+import OnboardingPage from './pages/Onboarding.vue';
 
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
@@ -19,7 +20,8 @@ const routes = [
   {path: '/', name: 'home', component: HomePage},
   {path: '/login', name: 'login', component: LoginPage},
   {path: '/profile/:id', name: 'profile', component: ProfilePage},
-  {path: '/login/register', name: 'register', component: RegisterPage, props:true}
+  {path: '/login/register', name: 'register', component: RegisterPage, props:true},
+  {path: '/onboarding/:stage', name: 'onboarding', component: OnboardingPage}
 ];
 
 const router = new VueRouter({
