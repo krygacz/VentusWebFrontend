@@ -49,10 +49,14 @@ export default {
         this.profile = Object.assign({}, response.data, this.profile);
       })
       .catch((e) => {
-        if(e.status == 401){
-          this.$router.push({name:'login'});
-        } else {
-          this.errorHandle(e.message);
+        if(e.code >= 500) this.errorHandle(e.message);
+        else switch(this.$router.currentRoute.name){
+            case 'login':
+            case 'register':
+            case 'onboarding':
+              break;
+            default:
+              this.$router.push({name:'login'});
         }
       })
       .finally(() => {this.ready = true; this.loading = false;})

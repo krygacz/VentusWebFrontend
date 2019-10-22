@@ -11,8 +11,11 @@ import RegisterPage from './pages/Register.vue';
 import OnboardingPage from './pages/Onboarding.vue';
 
 Vue.use(VueRouter);
+
 Vue.use(VueAxios, axios);
 Vue.axios.defaults.baseURL = "https://ventusapi.herokuapp.com/api";
+Vue.axios.defaults.withCredentials = true;
+Vue.axios.defaults.crossDomain = true;
 
 Vue.config.productionTip = false;
 

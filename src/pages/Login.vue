@@ -75,10 +75,19 @@ export default {
             var that = this;
             this.error = null;
             this.form_loading = true;
-            this.axios.post('/login',{email: this.email, password: this.password})
+            this.axios.post('/login',{email: this.email, password: this.password}, {crossDomain:true, withCredentials:true})
                 .then((response) => {
+                    // eslint-disable-next-line
+                    console.log(response);
+                    // eslint-disable-next-line
+                    console.log(document.cookie);
                     if(response.data.logged == 'yes'){
-                        that.$router.push({name:'home'});
+                        this.axios.get('/user',{crossDomain:true, withCredentials:true})
+                            // eslint-disable-next-line
+                            .then((r)=>{console.log(r)})
+                            // eslint-disable-next-line
+                            .catch((e)=>{console.log(e)});
+                        //that.$router.push({name:'home'});
                     } else that.error = "Wystąpił błąd przy logowaniu";
                 })
                 .catch((e) => {
