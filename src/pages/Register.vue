@@ -4,7 +4,7 @@
         <form @change="checkValidation()" class="form" ref="form">
             <div  class="input-wrapper">
                 <input v-model="name" type="text" placeholder=" " ref="el1" required>
-                <span>Imię i nazwisko</span>
+                <span>Imię</span>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
@@ -28,10 +28,22 @@
             </label>
             </div>
             <div  class="input-wrapper">
-                <input v-model="link" type="url" placeholder=" " ref="el4">
+                <input v-model="link" type="url" placeholder=" " ref="el4" required>
                 <span>Link do Facebooka / Messengera</span>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
+            </div>
+            <div class="input-multiple-wrapper">
+                <span>Zdjęcie profilowe:</span>
+                <input @change="checkFile" type="file" name="file" id="file" class="inputfile"  ref="fileSelector"/>
+                <label :class="{'accepted': this.picture != null}" for="file" ref="fileSelectorLabel">Choose a file</label>
+            </div>
+            <div class="input-multiple-wrapper checkbox-wrapper">
+                <span>Mam ukończone 13 lat <br>i akceptuję <a href="#" >warunki użytkowania</a></span>
+                <label class="checkbox">
+                    <input type="checkbox" required>
+                    <span class="slider"></span>
+                </label>
             </div>
             <button @click.prevent="register"  :class="{'visible':validated}" id="login">arrow_forward</button>
         </form>
@@ -52,6 +64,7 @@ export default {
     data(){
         return{
             name: null,
+            picture: null,
             location: null,
             age: null,
             gender: false,
@@ -63,8 +76,21 @@ export default {
     },
     methods:{
         checkValidation: function(){
+            this.error = null;
             this.validated = this.$refs.form.checkValidity();
             return this.validated;
+        },
+        checkFile: function(){
+            var fileName = '';
+            if(!this.$refs.fileSelector.files[0]){
+                this.picture = null;
+                return;
+            }
+            fileName = this.$refs.fileSelector.files[0].name;
+            this.picture = this.$refs.fileSelector.files[0];
+            // eslint-disable-next-line
+            console.log(this.picture);
+            if( fileName ){this.$refs.fileSelectorLabel.innerHTML = fileName;}
         },
         register: function(){
             if(!this.checkValidation()){
@@ -72,7 +98,19 @@ export default {
             }
             var that = this;
             this.error = null;
-            this.axios.post('/register',{email: this.email, password: this.password, name: this.name, location: this.location, gender: this.gender, birthday: this.age, messenger:this.link})
+            let formData = new FormData();
+            formData.append('email', this.email);
+            formData.append('username', this.email);
+            formData.append('password', this.password);
+            formData.append('first_name', this.name);
+            formData.append('location', this.location);
+            formData.append('birthday', this.age.toString());
+            formData.append('gender', this.gender?'male':'female');
+            formData.append('messenger', this.link);
+            if(this.picture){
+                formData.append('picture', this.picture);
+            }
+            this.axios.post('/register',formData, {headers: {'Content-Type': 'multipart/form-data'}})
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -88,8 +126,10 @@ export default {
                             that.$emit('error', 'status ' + response.status);
                     }
                 })
-                .catch(() => {
-                    that.error = "Wystąpił błąd podczas rejestracji";
+                .catch((e) => {
+                    if(e.response.status == 401 && e.response.data){
+                        that.error = e.response.data.error;
+                    }
                 })
         }
         
@@ -105,11 +145,13 @@ export default {
     align-content: center;
     justify-items:center;
     justify-content:space-evenly;
-    position:fixed;
+    position:absolute;
     top:0;
     left:0;
     right:0;
     bottom:0;
+    max-width:100vw;
+    min-height:720px;
 }
 .container > img{
     display:block;
@@ -123,7 +165,7 @@ export default {
     justify-content: space-between;
     align-content: center;
     width:45vw;
-    max-width:430px;
+    max-width:420px;
     background: $card_background_color;
     border: 1px solid $border_color;
     padding:50px;
@@ -140,7 +182,43 @@ export default {
 }
 .form > .half{
     max-width:calc(50% - 15px);
-
+}
+.form > .input-multiple-wrapper{
+    display:flex;
+    flex-flow: row nowrap;
+    align-content:center;
+    align-items:center;
+    justify-content: space-between;
+    box-sizing:border-box;
+    width:100%;
+    height: 50px;
+    position: relative;
+    margin-top:20px;
+    margin-bottom:15px;
+}
+.input-multiple-wrapper span{
+    padding:8px;
+    display:inline-block;
+    font-size:18px;
+    font-family:'Segoe UI';
+    font-weight:600;
+    line-height:1.2;
+    color:$primary_light;
+}
+.form > .checkbox-wrapper{
+    margin-top:20px;
+    margin-bottom:15px;
+    padding-left:20px;
+    padding-right:20px;
+}
+.checkbox-wrapper > span{
+    color:$primary_dark;
+    font-weight:400;
+    font-size:17px;
+    padding-left:0;
+}
+span > a, span > a:visited{
+    color:$primary_light;
 }
 .input-wrapper > input{
     box-sizing:border-box;
@@ -227,21 +305,28 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     width:100%;
     height:50px;
     display: inline-block;
-    padding: 10px 20px;
     border:2px solid $primary_light;
     border-radius: 50px;
     background-color: $primary_light;
     color: #fff;
     cursor:pointer;
-    margin:auto;
-    margin-top:30px;
     font-size:25px;
     font-weight:400;
-    transition: all 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition:all 300ms cubic-bezier(0.25, 0.1, 0.25, 1) 250ms;
     opacity:0;
-    transform:scaleX(0);
+    height:0;
+    width:0;
+    margin:-10px auto;
     pointer-events:none;
     font-family: 'Material Icons'
+}
+.form > button.visible{
+    pointer-events:all;
+    opacity:1;
+    height:50px;
+    width:100%;
+    padding: 10px 20px;
+    margin-top:30px;
 }
 .login{
     color:white;
@@ -262,7 +347,7 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     display:flex;
     justify-content: center;
     align-content: center;
-    background: $error;
+    background: $error_light;
     color:white;
     transition:all 300ms;
 }
@@ -326,14 +411,14 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 .switch-label::before {
 	content: attr(data-off);
 	color: white;
-    background: $accent_teal;
+    background: $primary_light;
 	backface-visibility: hidden;
 }
 .switch-label::after {
 	content: attr(data-on);
     opacity: 0;
     color: white;
-	background: $accent_orange;
+	background: $primary_light;
 	backface-visibility: hidden;
 	transform: rotateY(180deg);
 }
@@ -348,12 +433,88 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     opacity:1;
 	transform: rotateY(0);
 }
-.form > button.visible{
-    pointer-events:all;
-    opacity:1;
-    transform:scaleX(1)
+
+
+.checkbox {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 30px;
+}
+
+.checkbox input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 28px;
+  width: 28px;
+  left: 1px;
+  bottom: 1px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: $primary_light;
 }
 
 
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
 
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+.inputfile + label {
+    color: $primary_light;
+    background-color: white;
+    height:100%;
+    box-sizing:border-box;
+    border:2px solid $primary_light;
+    border-radius:5px;
+    padding-left:15px;
+    padding-right:15px;
+    align-items:center;
+    display:flex;
+    transition:all 300ms;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    color:white;
+    background-color: $primary_light;
+}
+.inputfile + .accepted {
+    color:white;
+    background-color: $accent_teal;
+    border-width:0px;
+}
+.inputfile + label {
+	cursor: pointer;
+}
 </style>
