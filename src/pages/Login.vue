@@ -13,8 +13,8 @@
                 <i class="material-icons error">close</i>
             </div>
             <transition name="bttn">
-                <button @click.prevent="login"  v-if="emailStatus == 1" id="login">Log in</button>
-                <button @click.prevent="signup" v-if="emailStatus == 2" id="signup">Register</button>
+                <button @click.prevent="login"  v-if="emailStatus == 1" id="login"><i class="material-icons error">arrow_forward</i></button>
+                <button @click.prevent="signup" v-if="emailStatus == 2" id="signup"><span>Register</span></button>
             </transition>
             
         </form>
@@ -216,18 +216,33 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 }
 .form > button{
     width:auto;
-  display: inline-block;
-  padding: 10px 20px;
-  border:2px solid $primary_light;
-  border-radius: 10px;
-  background-color: $primary_light;
-  color: #fff;
-  cursor:pointer;
-  margin:auto;
-  margin-top:30px;
-  font-size:18px;
-  font-weight:400;
-  transition: all 200ms;
+    display: flex;
+    align-items:center;
+    align-content:center;
+    justify-content:center;;
+    width:50%;
+    min-width:100px;
+    height:40px;
+    border:2px solid $primary_light;
+    border-radius: 40px;
+    background-color: $primary_light;
+    color: #fff;
+    cursor:pointer;
+    margin:auto;
+    margin-top:30px;
+    font-size:18px;
+    font-weight:400;
+    transition: all 200ms;
+}
+.form > button > i.material-icons{
+    justify-self:center;
+    align-self:center;
+    padding:5px;
+}
+.form > button > span{
+    font-size:17px;
+    font-family:'Segoe UI';
+    margin-top:-2px;
 }
 .login{
     color:white;
