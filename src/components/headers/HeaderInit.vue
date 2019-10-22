@@ -1,8 +1,8 @@
 <template>
     <div class="header" id="header">
-        <div v-on:click="$emit('header-event-return')" id="return"><i class="material-icons">arrow_back_ios</i></div>
+        <div @click="$emit('return')" id="return"><i class="material-icons">arrow_back_ios</i></div>
         <img id="logo" src="@/assets/logo.svg" />
-        <div v-on:click="$emit('header-event-done')" id="done" ><i class="material-icons">check</i></div>
+        <div @click="$emit('done')" id="done" ><i class="material-icons">check</i></div>
     </div>
 </template>
 

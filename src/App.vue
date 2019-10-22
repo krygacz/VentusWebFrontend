@@ -32,16 +32,20 @@ export default {
   mounted(){
     this.axios.get('/user')
       .then((response) => {
-        if(response.status != 200) {
-          this.errorHandle('status ' + response.status);
-        }
         this.loading = false;
         if(!response.data) this.errorHandle('no data received');
         else if(!response.data.email){
-          if(!(this.$router.currentRoute.name == 'login' || this.$router.currentRoute.name == 'register' || this.$router.currentRoute.name == 'onboarding')){
-            this.$router.push({name:'login'});
+          switch(this.$router.currentRoute.name){
+            case 'login':
+            case 'register':
+            case 'onboarding':
+              break;
+            default:
+              this.$router.push({name:'login'});
           }
-        }else if(!response.data.initialized){this.$router.push('/setup')}
+          return;
+        }
+        if(!response.data.initialized){this.$router.push('onboarding')}
         this.profile = Object.assign({}, response.data, this.profile);
       })
       .catch((e) => {

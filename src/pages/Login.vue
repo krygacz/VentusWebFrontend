@@ -72,15 +72,14 @@ export default {
                 })
         },
         login: function(){
-            if(!this.$refs.password.checkValidity() || !this.$refs.email.checkValidity()){
-                return;
-            }
             var that = this;
             this.error = null;
             this.form_loading = true;
             this.axios.post('/login',{email: this.email, password: this.password})
-                .then(() => {
-                    that.$router.push({name:'home'});
+                .then((response) => {
+                    if(response.data.logged == 'yes'){
+                        that.$router.push({name:'home'});
+                    } else that.error = "Wystąpił błąd przy logowaniu";
                 })
                 .catch((e) => {
                     that.error = 'Wystąpił błąd: ';
