@@ -1,10 +1,12 @@
 <template>
   <div id="app">
-    <div class="error-container" v-if="errored"><div class="error">THERE WAS AN ERROR<br><br><span>{{errormsg}}</span></div></div>
     <transition name="fade">
-      <div class="loader-container" v-if="loading"><div class="loader"></div></div>
+      <div class="error-container" v-if="errored"><div class="error">THERE WAS AN ERROR<br><br><span>{{errormsg}}</span></div></div>
+      <div class="loader-container" v-if="loading && !errored"><div class="loader"></div></div>
     </transition>
-    <router-view  v-on:error="errorHandle" v-if="!errored && ready" v-model="loading" :profile="profile"> </router-view>
+    <transition :name="transitionName">
+      <router-view  v-on:error="errorHandle" v-if="!errored && ready" v-model="loading" :profile="profile"> </router-view>
+    </transition>
   </div>
 </template>
 
@@ -17,6 +19,7 @@ export default {
       errormsg:'',
       loading:true,
       ready:false,
+      transitionName:'slide-left',
       profile:{}
     }
   },
@@ -32,21 +35,33 @@ export default {
         if(response.status != 200) {
           this.errorHandle('status ' + response.status);
         }
+        this.loading = false;
         if(!response.data) this.errorHandle('no data received');
-        if(!response.data.User){this.$router.push({name:'login'})}
-        else if(!response.data.User.initialized){this.$router.push('/setup')}
+        else if(!response.data.email){
+          if(!(this.$router.currentRoute.name == 'login' || this.$router.currentRoute.name == 'register' || this.$router.currentRoute.name == 'onboarding')){
+            this.$router.push({name:'login'});
+          }
+        }else if(!response.data.initialized){this.$router.push('/setup')}
         this.profile = Object.assign({}, response.data, this.profile);
       })
       .catch((e) => {
-        this.errorHandle(e.message);
+        if(e.status == 401){
+          this.$router.push({name:'login'});
+        } else {
+          this.errorHandle(e.message);
+        }
       })
       .finally(() => {this.ready = true; this.loading = false;})
   },
-  // eslint-disable-next-line
-  beforeRouteUpdate (a,b,next) {
+  watch: {
+  '$route' (to, from) {
     this.errored = false;
-    next();
+    const toDepth = to.path.split('/').length
+    const fromDepth = from.path.split('/').length
+    this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
   }
+}
+
 }
 </script>
 
@@ -73,7 +88,7 @@ export default {
   align-items:center;
   justify-content:center;
   z-index:-1;
-  background:#B71C1C;
+  background: $error;
 }
 .error-container .error{
   text-align:center;
@@ -119,5 +134,48 @@ export default {
 .fade-enter, .fade-leave-to{
   opacity: 0;
 }
-*{font-family:"Segoe UI"}
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition-duration: 0.5s;
+  transition-property: height, opacity, transform;
+  transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
+  overflow: hidden;
+}
+
+.slide-left-enter,
+.slide-right-leave-active {
+  opacity: 0;
+  transform: translate(2em, 0);
+}
+
+.slide-left-leave-active,
+.slide-right-enter {
+  opacity: 0;
+  transform: translate(-2em, 0);
+}
+#app{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  margin:0;
+  padding:0;
+  font-family: 'Segoe UI';
+}
+</style>
+
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    display: none; 
+    -webkit-appearance: none!important;
+    margin: 0; 
+}
+
+input[type=number] {
+    -moz-appearance:textfield; 
+}
 </style>
