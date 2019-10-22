@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <img src="@/assets/logo.svg" />
-        <form @change="checkValidation()" class="form" ref="form">
+        <form @input="checkValidation()" class="form" ref="form">
             <div  class="input-wrapper">
                 <input v-model="name" type="text" placeholder=" " ref="el1" required>
                 <span>Imię</span>
@@ -45,7 +45,7 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <button @click.prevent="register"  :class="{'visible':validated}" id="login">arrow_forward</button>
+            <button @click.prevent="register"  :class="{'visible':validated}" id="login"><i :class="{'spin': form_loading}" class="material-icons error">{{form_loading?'refresh':'arrow_forward'}}</i></button>
         </form>
         <transition name="er">
             <div v-if="error" class="errormsg"><span>{{error}}</span></div>
@@ -71,6 +71,7 @@ export default {
             link: null,
             emailStatus: 0,
             error: null,
+            form_loading:false,
             validated:false
         }
     },
@@ -97,10 +98,10 @@ export default {
                 return;
             }
             var that = this;
+            this.form_loading = true;
             this.error = null;
             let formData = new FormData();
             formData.append('email', this.email);
-            formData.append('username', this.email);
             formData.append('password', this.password);
             formData.append('first_name', this.name);
             formData.append('location', this.location);
@@ -111,26 +112,19 @@ export default {
                 formData.append('picture', this.picture);
             }
             this.axios.post('/register',formData, {headers: {'Content-Type': 'multipart/form-data'}})
-                .then((response) => {
-                    switch(response.status){
-                        case 200:
-                            that.$router.push({name:'home'});
-                            break;
-                        case 401:
-                            that.error = "Wystąpił błąd podczas rejestracji";
-                            if(response.data.error){
-                                that.error = response.data.error
-                            }
-                            break;
-                        default:
-                            that.$emit('error', 'status ' + response.status);
-                    }
+                .then(() => {
+                    that.$router.push({name:'home'});
                 })
                 .catch((e) => {
-                    if(e.response.status == 401 && e.response.data){
+                    that.error = 'Wystąpił błąd: ';
+                    if(e.response.data.error){
                         that.error = e.response.data.error;
+                    } else {
+                        that.error += e.message;
                     }
+                    window.setTimeout(that.checkValidation, 3500);
                 })
+                .finally(()=>{that.form_loading = false;})
         }
         
     }
@@ -193,15 +187,15 @@ export default {
     width:100%;
     height: 50px;
     position: relative;
-    margin-top:20px;
+    margin-top:15px;
     margin-bottom:15px;
 }
 .input-multiple-wrapper span{
     padding:8px;
     display:inline-block;
-    font-size:18px;
+    font-size:20px;
     font-family:'Segoe UI';
-    font-weight:600;
+    font-weight:400;
     line-height:1.2;
     color:$primary_light;
 }
@@ -318,7 +312,12 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     width:0;
     margin:-10px auto;
     pointer-events:none;
+    outline:none;
     font-family: 'Material Icons'
+}
+.form > button:hover{
+    transition-delay:0ms;
+    transform:scale(1.04);
 }
 .form > button.visible{
     pointer-events:all;
@@ -349,14 +348,14 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     align-content: center;
     background: $error_light;
     color:white;
-    transition:all 300ms;
+    transition:all 250ms;
 }
 .errormsg > span{
     position:relative;
     margin:auto;
     font-family: 'Segoe UI';
     font-weight:300;
-    font-size:30px;
+    font-size:28px;
 }
 .er-enter-active, .er-leave-active {
   height:60px;
@@ -516,5 +515,19 @@ input:checked + .slider:before {
 }
 .inputfile + label {
 	cursor: pointer;
+}
+.spin {
+  animation-name: spin;
+  animation-duration:1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
 }
 </style>

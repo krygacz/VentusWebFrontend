@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <img src="@/assets/logo.svg" />
-        <form class="form">
+        <form @input="errorUpdate" class="form">
             <div  class="input-wrapper">
                 <input @change="checkEmail" v-model="email" type="email" placeholder="E-mail" ref="email" required>
                 <i class="material-icons ok">done</i>
@@ -12,11 +12,10 @@
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
-            <transition name="bttn">
-                <button @click.prevent="login"  v-if="emailStatus == 1" id="login"><i class="material-icons error">arrow_forward</i></button>
-                <button @click.prevent="signup" v-if="emailStatus == 2" id="signup"><span>Register</span></button>
-            </transition>
-            
+            <button @click.prevent="process"  :disabled="emailStatus == 0" id="submit">
+                <span v-if="emailStatus == 2">Register</span>
+                <i v-if="emailStatus == 1" :class="{'spin': form_loading}" class="material-icons error">{{form_loading?'refresh':'arrow_forward'}}</i>
+            </button>
         </form>
         <transition name="er">
             <div v-if="error" class="errormsg"><span>{{error}}</span></div>
@@ -34,6 +33,7 @@ export default {
     },
     data(){
         return{
+            form_loading: false,
             email: null,
             password: null,
             emailStatus: 0,
@@ -48,27 +48,23 @@ export default {
                 return;
             }
             this.error = null;
-            this.axios.post('/check_email',{email: this.email})
+            var vf = new FormData();
+            vf.append("email", this.email);
+            this.axios.post('/check_email',vf)
                 .then((response) => {
-                    switch(response.status){
-                        case 200:
-                            if(response.data){
-                                switch(response.data.status){
-                                    case 'login':
-                                        that.emailStatus = 1;
-                                        break;
-                                    case 'register':
-                                        that.emailStatus = 2;
-                                        break;
-                                    default:
-                                        that.$emit('error', 'wrong response from backend');
-                                }
-                            } else {
-                                that.$emit('error', 'no data');
-                            }
-                            break;
-                        default:
-                            that.$emit('error', 'status ' + response.status);
+                    if(response.data){
+                        switch(response.data.status){
+                            case 'login':
+                                that.emailStatus = 1;
+                                break;
+                            case 'register':
+                                that.emailStatus = 2;
+                                break;
+                            default:
+                                that.$emit('error', 'wrong response from backend');
+                        }
+                    } else {
+                        that.$emit('error', 'no data');
                     }
                 })
                 .catch((e) => {
@@ -81,25 +77,21 @@ export default {
             }
             var that = this;
             this.error = null;
+            this.form_loading = true;
             this.axios.post('/login',{email: this.email, password: this.password})
-                .then((response) => {
-                    switch(response.status){
-                        case 200:
-                            that.$router.push({name:'home'});
-                            break;
-                        case 401:
-                            that.error = "Wystąpił błąd podczas logowania";
-                            if(response.data.message){
-                                that.error = response.data.error
-                            }
-                            break;
-                        default:
-                            that.$emit('error', 'status ' + response.status);
-                    }
+                .then(() => {
+                    that.$router.push({name:'home'});
                 })
                 .catch((e) => {
-                    that.$emit('error', e.message);
+                    that.error = 'Wystąpił błąd: ';
+                    if(e.response.data.error){
+                        that.error = e.response.data.error;
+                    } else {
+                        that.error += e.message;
+                    }
+                    window.setTimeout(this.errorUpdate, 3500);
                 })
+                .finally(()=>{that.form_loading = false})
         },
         signup: function(){
             if(!this.$refs.password.checkValidity() || !this.$refs.email.checkValidity()){
@@ -107,6 +99,21 @@ export default {
             }
             this.error = null;
             this.$router.push({name:'register', params:{email: this.email, password: this.password}});
+        },
+        process:function(){
+            switch(this.emailStatus){
+                case 0:
+                    break;
+                case 1:
+                    this.login();
+                    break;
+                case 2:
+                    this.signup();
+                    break;
+            }
+        },
+        errorUpdate: function(){
+            this.error = null;
         }
         
     }
@@ -125,11 +132,12 @@ export default {
     left:0;
     right:0;
     bottom:0;
+    transition:all 200ms;
 }
 .container > img{
     display:block;
     width:70vw;
-    max-width:470px;
+    max-width:500px;
     margin-bottom:12vh;
     margin-top:auto;
 }
@@ -199,6 +207,8 @@ export default {
     color:transparent;
     transition: opacity 200ms;
     transition-delay:100ms;
+    pointer-events:none;
+    user-select:none;
     z-index:-1;
 }
 input:valid ~ .ok{
@@ -222,17 +232,25 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     justify-content:center;;
     width:50%;
     min-width:100px;
-    height:40px;
+    height:0;
     border:2px solid $primary_light;
     border-radius: 40px;
     background-color: $primary_light;
     color: #fff;
     cursor:pointer;
     margin:auto;
-    margin-top:30px;
+    margin-top:0;
     font-size:18px;
     font-weight:400;
-    transition: all 200ms;
+    transform:scale(0);
+    opacity:0;
+    transform-origin:top center;
+    outline:none;
+    pointer-events:none;
+    transition: all 250ms;
+}
+.form > button:hover{
+    transform:scale(1.05);
 }
 .form > button > i.material-icons{
     justify-self:center;
@@ -263,16 +281,16 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
     display:flex;
     justify-content: center;
     align-content: center;
-    background: $error;
+    background: $error_light;
     color:white;
-    transition:all 300ms;
+    transition:all 250ms;
 }
 .errormsg > span{
     position:relative;
     margin:auto;
     font-family: 'Segoe UI';
     font-weight:300;
-    font-size:30px;
+    font-size:28px;
 }
 .er-enter-active, .er-leave-active {
   height:60px;
@@ -280,12 +298,28 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 }
 .er-enter, .er-leave-to{
   height:0;
-  opacity:0;
+  opacity:0.5;
 }
-.bttn-enter-active, .bttn-leave-active {
-  transform:scale(1);
+.form > button:not(:disabled){
+    margin-top:32px;
+    height:40px;
+    opacity:1;
+    transform-origin:top center;
+    transform: scale(1);
+    pointer-events:all;
 }
-.bttn-enter, .bttn-leave-to{
-  transform:scale(0);
+.spin {
+  animation-name: spin;
+  animation-duration:1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
 }
 </style>
