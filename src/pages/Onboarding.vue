@@ -51,9 +51,9 @@ export default {
         var that = this;
         this.api.get('/user')
                 .then((response) => {
-                    if(!response.data.categories){
+                    if(response.data.categories.length == 0){
                         that.type = "SelectCategory";
-                    }else if(!response.data.interests){
+                    }else if(response.data.subcategories.length == 0){
                         that.type = "SelectInterest";
                     }else{
                         that.$emit('error', 'Wrong redirection');

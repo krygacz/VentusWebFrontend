@@ -128,11 +128,10 @@ export default {
     align-items: center;
     justify-items:center;
     justify-content:space-around;
-    position: absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
+    position: relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
     transition:all 200ms;
 }
 .container > img{

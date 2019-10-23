@@ -33,7 +33,7 @@ export default {
     if(localStorage.getItem('token')){
       this.api.get('/user')
         .then((response) => {
-          if(!response.data.categories){
+          if(response.data.categories.length == 0){
             this.$router.push('onboarding');
           } else {
             this.profile = Object.assign({}, response.data, this.profile);
@@ -48,8 +48,8 @@ export default {
         .finally(() => {this.ready = true; this.loading = false;});
     } else {
       this.loading = false;
-      this.ready = true;
       this.$router.push({name:'login'});
+      this.ready = true;
     }
   },
   watch: {
@@ -63,7 +63,7 @@ export default {
         this.ready = false;
         this.api.get('/user')
           .then((response) => {
-            if(!response.data.categories){
+            if(response.data.categories.length == 0){
               this.$router.push('onboarding');
             } else {
               this.profile = Object.assign({}, response.data, this.profile);
