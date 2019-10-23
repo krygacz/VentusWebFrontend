@@ -30,7 +30,7 @@ export default {
     mounted(){
         this.$emit('load', true);
         var that = this;
-        this.axios.get('/user/recommendations')
+        this.api.get('/user/recommendations')
                 .then((response) => {
                     if(response.status != 200) {
                         that.$emit('error', 'status ' + response.status);

@@ -27,7 +27,7 @@ export default {
     mounted(){
         this.$emit('load', true);
         var that = this;
-        this.axios.get('/categories')
+        this.axios.get('/category')
                 .then((response) => {
                     if(response.data.length > 0){
                         that.categories = Object.assign({}, response.data, that.categories);

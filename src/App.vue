@@ -20,7 +20,7 @@ export default {
       loading:true,
       ready:false,
       transitionName:'slide-left',
-      profile:{}
+      profile:null
     }
   },
   methods:{
@@ -30,46 +30,52 @@ export default {
     }
   },
   mounted(){
-    this.axios.get('/user')
-      .then((response) => {
-        this.loading = false;
-        if(!response.data) this.errorHandle('no data received');
-        else if(!response.data.email){
-          switch(this.$router.currentRoute.name){
-            case 'login':
-            case 'register':
-            case 'onboarding':
-              break;
-            default:
-              this.$router.push({name:'login'});
+    if(localStorage.getItem('token')){
+      this.api.get('/user')
+        .then((response) => {
+          if(!response.data.categories){
+            this.$router.push('onboarding');
+          } else {
+            this.profile = Object.assign({}, response.data, this.profile);
           }
-          return;
-        }
-        if(!response.data.initialized){this.$router.push('onboarding')}
-        this.profile = Object.assign({}, response.data, this.profile);
-      })
-      .catch((e) => {
-        if(e.code >= 500) this.errorHandle(e.message);
-        else switch(this.$router.currentRoute.name){
-            case 'login':
-            case 'register':
-            case 'onboarding':
-              break;
-            default:
-              this.$router.push({name:'login'});
-        }
-      })
-      .finally(() => {this.ready = true; this.loading = false;})
+        })
+        .catch((e) => {
+          /*localStorage.removeItem('token');
+          localStorage.removeItem('refresh_token');
+          this.$router.push({name:'login'});*/
+          this.errorHandle(e.message)
+        })
+        .finally(() => {this.ready = true; this.loading = false;});
+    } else {
+      this.loading = false;
+      this.ready = true;
+      this.$router.push({name:'login'});
+    }
   },
   watch: {
-  '$route' (to, from) {
-    this.errored = false;
-    const toDepth = to.path.split('/').length
-    const fromDepth = from.path.split('/').length
-    this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+    '$route' (to, from) {
+      this.errored = false;
+      const toDepth = to.path.split('/').length
+      const fromDepth = from.path.split('/').length
+      this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      if(this.profile == null && localStorage.getItem('token')){
+        this.loading = true;
+        this.ready = false;
+        this.api.get('/user')
+          .then((response) => {
+            if(!response.data.categories){
+              this.$router.push('onboarding');
+            } else {
+              this.profile = Object.assign({}, response.data, this.profile);
+            }
+          })
+          .catch((e) => {
+            this.errorHandle(e.message);
+          })
+          .finally(() => {this.ready = true; this.loading = false;});
+      }
+    }
   }
-}
-
 }
 </script>
 
@@ -164,7 +170,8 @@ export default {
   transform: translate(-2em, 0);
 }
 #app{
-  position:fixed;
+  position:absolute;
+  min-height:450px;
   top:0;
   bottom:0;
   left:0;

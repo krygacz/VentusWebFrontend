@@ -75,19 +75,12 @@ export default {
             var that = this;
             this.error = null;
             this.form_loading = true;
-            this.axios.post('/login',{email: this.email, password: this.password}, {crossDomain:true, withCredentials:true})
+            this.axios.post('/login_check',{username: this.email, password: this.password})
                 .then((response) => {
-                    // eslint-disable-next-line
-                    console.log(response);
-                    // eslint-disable-next-line
-                    console.log(document.cookie);
-                    if(response.data.logged == 'yes'){
-                        this.axios.get('/user',{crossDomain:true, withCredentials:true})
-                            // eslint-disable-next-line
-                            .then((r)=>{console.log(r)})
-                            // eslint-disable-next-line
-                            .catch((e)=>{console.log(e)});
-                        //that.$router.push({name:'home'});
+                    if(response.data.token && response.data.refresh_token){
+                        localStorage.setItem('token', response.data.token);
+                        localStorage.setItem('refresh_token', response.data.refresh_token);
+                        that.$router.push({name:'home'});
                     } else that.error = "Wystąpił błąd przy logowaniu";
                 })
                 .catch((e) => {
@@ -135,7 +128,7 @@ export default {
     align-items: center;
     justify-items:center;
     justify-content:space-around;
-    position:fixed;
+    position: absolute;
     top:0;
     left:0;
     right:0;
@@ -146,7 +139,7 @@ export default {
     display:block;
     width:70vw;
     max-width:500px;
-    margin-bottom:12vh;
+    margin-bottom:10vh;
     margin-top:auto;
 }
 .form{

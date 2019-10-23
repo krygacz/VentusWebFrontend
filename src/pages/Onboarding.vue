@@ -49,12 +49,12 @@ export default {
         }
         this.$emit('load', true);
         var that = this;
-        this.axios.get('/user')
+        this.api.get('/user')
                 .then((response) => {
                     if(!response.data.categories){
                         that.type = "SelectCategory";
                     }else if(!response.data.interests){
-                        that.type = "SelectCategory";
+                        that.type = "SelectInterest";
                     }else{
                         that.$emit('error', 'Wrong redirection');
                     }

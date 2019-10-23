@@ -53,7 +53,7 @@ export default {
     mounted(){
         this.$emit('load', true);
         var that = this;
-        this.axios.get('/profile/' + this.$route.params.id)
+        this.api.get('/profile/' + this.$route.params.id)
                 .then((response) => {
                     if(response.status != 200) {
                         that.$emit('error', 'status ' + response.status);
