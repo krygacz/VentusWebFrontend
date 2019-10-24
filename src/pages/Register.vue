@@ -89,9 +89,28 @@ export default {
             }
             fileName = this.$refs.fileSelector.files[0].name;
             this.picture = this.$refs.fileSelector.files[0];
-            // eslint-disable-next-line
-            console.log(this.picture);
             if( fileName ){this.$refs.fileSelectorLabel.innerHTML = fileName;}
+        },
+        login: function(){
+            let that = this;
+            this.axios.post('/login_check',{username: this.email, password: this.password})
+                .then((response) => {
+                    if(response.data.token && response.data.refresh_token){
+                        localStorage.setItem('token', response.data.token);
+                        localStorage.setItem('refresh_token', response.data.refresh_token);
+                        that.$router.push({name:'home'});
+                    } else that.error = "Wystąpił błąd przy logowaniu";
+                })
+                .catch((e) => {
+                    that.error = 'Wystąpił błąd: ';
+                    if(e.response.data.error){
+                        that.error = e.response.data.error;
+                    } else {
+                        that.error += e.message;
+                    }
+                    window.setTimeout(this.errorUpdate, 3500);
+                })
+                .finally(()=>{that.form_loading = false})
         },
         register: function(){
             if(!this.checkValidation()){
@@ -113,7 +132,7 @@ export default {
             }
             this.axios.post('/register',formData, {headers: {'Content-Type': 'multipart/form-data'}})
                 .then(() => {
-                    that.$router.push({name:'home'});
+                    this.login();
                 })
                 .catch((e) => {
                     that.error = 'Wystąpił błąd: ';
@@ -122,9 +141,9 @@ export default {
                     } else {
                         that.error += e.message;
                     }
+                    that.form_loading = false;
                     window.setTimeout(that.checkValidation, 3500);
                 })
-                .finally(()=>{that.form_loading = false;})
         }
         
     }

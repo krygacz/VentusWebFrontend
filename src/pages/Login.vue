@@ -80,7 +80,7 @@ export default {
                     if(response.data.token && response.data.refresh_token){
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
-                        that.$router.push({name:'home'});
+                        that.$router.push({name:'home', params:{'force_reload':true}});
                     } else that.error = "Wystąpił błąd przy logowaniu";
                 })
                 .catch((e) => {
@@ -99,7 +99,8 @@ export default {
                 return;
             }
             this.error = null;
-            this.$router.push({name:'register', params:{email: this.email, password: this.password}});
+            var that = this;
+            this.$router.push({name:'register', params:{email: that.email, password: that.password}});
         },
         process:function(){
             switch(this.emailStatus){

@@ -1,0 +1,17 @@
+@mixin get-color-border($index) {
+    color: nth($color_list, $index);
+    border-color: nth($color_list, $index);
+}
+@mixin get-background($index) {
+    background-color: nth($color_list, $index);
+}
+@mixin children-colors {
+    @for $i from 1 through length($color_list) {
+      &:nth-child(#{length($color_list)}n + #{$i}) > .switch-input:checked ~ .switch-label{
+        @include get-background($i);
+      }
+      &:nth-child(#{length($color_list)}n + #{$i}) > .switch-label{
+        @include get-color-border($i);
+      }
+    }
+}

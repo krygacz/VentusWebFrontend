@@ -32,12 +32,11 @@ export default {
         var that = this;
         this.api.get('/user/recommendations')
                 .then((response) => {
-                    if(response.status != 200) {
-                        that.$emit('error', 'status ' + response.status);
-                    }
                     if(response.data.recommendations){
                         this.recommendations = Object.assign({}, response.data, this.recommendations);
-                    }else that.$emit('error', 'no data received');
+                    } else {
+                        that.$emit('error', 'no data received');
+                    }
                 })
                 .catch((e) => {
                     that.$emit('error', e.message);

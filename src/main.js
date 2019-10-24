@@ -25,7 +25,7 @@ function getAccessToken(){
 function getRefreshToken(){
   return localStorage.getItem('refresh_token');
 }
-const refreshAuthLogic = failedRequest => api.post('/token/refresh', {"refresh_token": getRefreshToken()}).then(tokenRefreshResponse => {
+const refreshAuthLogic = failedRequest => Vue.axios.post('/token/refresh', {"refresh_token": getRefreshToken()}).then(tokenRefreshResponse => {
     localStorage.setItem('token', tokenRefreshResponse.data.token);
     failedRequest.response.config.headers['Authentication'] = 'Bearer ' + tokenRefreshResponse.data.token;
     return Promise.resolve();
@@ -46,7 +46,7 @@ const routes = [
   {path: '/profile/:id', name: 'profile', component: ProfilePage},
   {path: '/login/register', name: 'register', component: RegisterPage, props:true},
   {path: '/onboarding', name: 'onboarding', component: OnboardingPage},
-  {path: '/onboarding/:stage', component: OnboardingPage}
+  {path: '/onboarding/:stage', name: 'onboarding_specified', component: OnboardingPage}
 ];
 
 const router = new VueRouter({

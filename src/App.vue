@@ -11,6 +11,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
   name: 'app',
   data(){
@@ -27,30 +28,35 @@ export default {
     errorHandle: function(e) {
       this.errormsg = e;
       this.errored = true;
+    },
+    refreshData: function(){
+      var that = this;
+      if(localStorage.getItem('token')){
+        this.api.get('/user')
+          .then((response) => {
+            if(response.data.categories.length == 0 || response.data.subcategories.length == 0){
+              if(that.$router.currentRoute.name != 'onboarding' && that.$router.currentRoute.name != 'onboarding_specified'){
+                that.$router.push({name: 'onboarding'});
+              }
+            } else {
+              that.profile = Object.assign({}, response.data, that.profile);
+            }
+          })
+          .catch((e) => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('refresh_token');
+            this.$router.push({name:'login'});
+          })
+          .finally(() => {that.ready = true;});
+      } else {
+        this.loading = false;
+        this.$router.push({name:'login'});
+        this.ready = true;
+      }
     }
   },
   mounted(){
-    if(localStorage.getItem('token')){
-      this.api.get('/user')
-        .then((response) => {
-          if(response.data.categories.length == 0){
-            this.$router.push('onboarding');
-          } else {
-            this.profile = Object.assign({}, response.data, this.profile);
-          }
-        })
-        .catch((e) => {
-          /*localStorage.removeItem('token');
-          localStorage.removeItem('refresh_token');
-          this.$router.push({name:'login'});*/
-          this.errorHandle(e.message)
-        })
-        .finally(() => {this.ready = true; this.loading = false;});
-    } else {
-      this.loading = false;
-      this.$router.push({name:'login'});
-      this.ready = true;
-    }
+    this.refreshData();
   },
   watch: {
     '$route' (to, from) {
@@ -58,21 +64,15 @@ export default {
       const toDepth = to.path.split('/').length
       const fromDepth = from.path.split('/').length
       this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
-      if(this.profile == null && localStorage.getItem('token')){
-        this.loading = true;
-        this.ready = false;
-        this.api.get('/user')
-          .then((response) => {
-            if(response.data.categories.length == 0){
-              this.$router.push('onboarding');
-            } else {
-              this.profile = Object.assign({}, response.data, this.profile);
-            }
-          })
-          .catch((e) => {
-            this.errorHandle(e.message);
-          })
-          .finally(() => {this.ready = true; this.loading = false;});
+      if(this.$route.params.force_reload){
+        this.forceUpdate();
+      }
+      switch(this.$router.currentRoute.name){
+        case 'register':
+        case 'login':
+          break;
+        default:
+          this.refreshData();
       }
     }
   }

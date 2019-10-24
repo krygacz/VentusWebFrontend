@@ -1,5 +1,5 @@
 <template>
-    <component :is="type" :profile="profile"></component>
+    <component @done="done" @return="back" :is="type" :profile="profile"></component>
 </template>
 <script>
 import HeaderStandard from './headers/HeaderStandard.vue'
@@ -11,6 +11,14 @@ export default {
     HeaderStandard,
     HeaderInit
   },
-  props: ['type', 'profile']
+  props: ['type', 'profile'],
+  methods:{
+    done:function(){
+      this.$emit('done');
+    },
+    back:function(){
+      this.$emit('return');
+    }
+  }
 }
 </script>

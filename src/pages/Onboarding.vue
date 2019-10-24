@@ -1,7 +1,10 @@
 <template>
     <div id="home">
         <Header @return="back" @done="process" :type="'HeaderInit'" :profile="profile" />
-        <component :is="type" :done="done" ref="content"/>
+        <component :is="type" @ready="ready" @error="errorHandle" ref="content"/>
+        <transition name="er">
+            <div v-if="error" class="errormsg"><span>{{error}}</span></div>
+        </transition>
     </div>
 </template>
 
@@ -25,45 +28,67 @@ export default {
         return{
             type:null,
             done:false,
-            errored:false
+            error:null
         }
     },
     methods:{
         process: function(){
+            this.$emit('load', true);
             this.$refs.content.process();
         },
         back: function(){
             this.$router.go(1);
+        },
+        ready: function(){
+            this.$emit('load', false);
+        },
+        errorHandle: function(e){
+            this.error = e;
+            let that = this;
+            setTimeout(()=>{that.error = null;}, 3000);
+        },
+        paramsHandle: function(){
+            if(this.$route.params.stage){
+                switch(this.$route.params.stage){
+                    case 'categories':
+                        this.type="SelectCategory";
+                        break;
+                    case 'interests':
+                        this.type="SelectInterest";
+                        break;
+                    default:
+                        this.$router.push({name:'onboarding'});
+                }
+                return true;
+            }
+            return false;
         }
     },
     mounted(){
-        if(this.$route.params.stage){
-            switch(this.$route.params.stage){
-                case 'categories':
-                    this.type="SelectCategory";
-                    return;
-                case 'interests':
-                    this.type="SelectInterest";
-                    return;
-            }
-        }
         this.$emit('load', true);
+        if(this.paramsHandle()){
+            return;
+        }
         var that = this;
         this.api.get('/user')
                 .then((response) => {
                     if(response.data.categories.length == 0){
-                        that.type = "SelectCategory";
-                    }else if(response.data.subcategories.length == 0){
-                        that.type = "SelectInterest";
-                    }else{
-                        that.$emit('error', 'Wrong redirection');
+                        that.$router.push({name:'onboarding_specified', params:{stage:'categories'}});
+                    } else if(response.data.subcategories.length == 0){
+                        that.$router.push({name:'onboarding_specified', params:{stage:'interests'}});
+                    } else {
+                        that.$router.push({name: 'home'});
                     }
                 })
                 .catch((e) => {
                     that.$emit('error', e.message);
                 })
-                /*.finally(function(){that.$emit('load', false);})*/
+    },
+    watch: {
+    '$route' () {
+        this.paramsHandle();
     }
+  }
 }
 </script>
 
@@ -81,5 +106,34 @@ export default {
     padding:50px;
     padding-top:100px;
 
+}
+.errormsg{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:60px;
+    display:flex;
+    justify-content: center;
+    align-content: center;
+    background: $error_light;
+    color:white;
+    z-index:9999999;
+    transition:all 250ms;
+}
+.errormsg > span{
+    position:relative;
+    margin:auto;
+    font-family: 'Segoe UI';
+    font-weight:300;
+    font-size:28px;
+}
+.er-enter-active, .er-leave-active {
+  height:60px;
+  opacity:1;
+}
+.er-enter, .er-leave-to{
+  height:0;
+  opacity:0.5;
 }
 </style>
