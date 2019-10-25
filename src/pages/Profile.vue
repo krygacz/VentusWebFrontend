@@ -1,25 +1,25 @@
 <template>
     <div id="profile">
-        <Header :type="'HeaderStandard'" :profile="profile" />
+        <Header :type="'HeaderStandard'" @home="home" :profile="profile" />
         <div class="profile-container">
             <div class="details">
                 <radial-progress-bar class="circle"
                     :diameter="140"
-                    :completed-steps="user.percentage"
+                    :completed-steps="user.match"
                     :total-steps="100"
                     :innerStrokeColor="'#dddddd00'"
                     :strokeWidth="9"
-                    :startColor="(user.percentage>40)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'"
-                    :stopColor="(user.percentage>40)?(user.percentage>70)?'#46B29D':'#FEB74E':'#FFAD6F'">
-                        <img :src="user.picture" />
+                    :startColor="(user.match>40)?(user.match>70)?'#46B29D':'#FEB74E':'#FFAD6F'"
+                    :stopColor="(user.match>40)?(user.match>70)?'#46B29D':'#FEB74E':'#FFAD6F'">
+                        <img loading="lazy" :src="(user.picture)?user.picture:'https://ventusapp.herokuapp.com/profile_placeholder.png'">
                 </radial-progress-bar>
-                <h1>{{user.first_name + ' ' + user.last_name}}</h1>
+                <h1>{{user.name}}</h1>
                 <h2>{{user.location}}</h2>
-                <h3>Lat {{user.age}}</h3>
-                <button id="contact">Wyślij prośbę o kontakt</button>
+                <h3>Lat {{age}}</h3>
+                <button id="contact" @click="message">Send message request</button>
             </div>
             <div class="hobbies">
-                <div class="progressbar" :class="{low:item.percentage<35, mid:item.percentage>= 35 && item.percentage < 70, high: item.percentage > 70}" v-for="item in user.hobbies" :key="item.id">
+                <div class="progressbar" :class="{low:item.percentage<35, mid:item.percentage>= 35 && item.percentage < 70, high: item.percentage > 70}" v-for="item in user.subcategories" :key="item.id">
                     <span class="label">{{item.name}}</span>
                     <div class="progress-container"  >
                         <div class="progress-value" :style="{width: item.percentage + '%'}"></div>
@@ -44,21 +44,39 @@ export default {
         prop: 'loading',
         event:'load'
     },
-    data(){           
+    data(){
         return{
             user:{},
             errored:false
         }
     },
+    computed: {
+        age: function(){
+            if(!this.user.birthday) return 'N/A';
+            let d = new Date();
+            let a = d.getFullYear() - this.user.birthday;
+            if(a <= 0) return "N/A";
+            return a;
+        }
+    },
+    methods: {
+        home: function(){
+            this.$router.push({name:'home'});
+        },
+        message: function(){
+            if(!this.user.messenger){
+                alert("This user didn't provide his contact info");
+                return;
+            }
+            window.open(this.user.messenger);
+        }
+    },
     mounted(){
-        this.$emit('load', true);
         var that = this;
-        this.api.get('/profile/' + this.$route.params.id)
+        that.$emit('load', true);
+        this.api.post('/user/' + this.$route.params.id)
                 .then((response) => {
-                    if(response.status != 200) {
-                        that.$emit('error', 'status ' + response.status);
-                    }
-                    if(response.data.user){
+                    if(response.data.id){
                         that.user = Object.assign({}, response.data, that.user);
                     }else that.$emit('error', 'no data received');
                 })
@@ -81,8 +99,8 @@ export default {
     left:0;
     right:0;
     bottom:0;
-    padding:50px;
-    padding-top:100px;
+    padding:40px;
+    padding-top:120px;
 }
 .profile-container > .details, .profile-container > .hobbies{
     width:50%;
@@ -95,7 +113,7 @@ export default {
     justify-items: center;
     justify-content:center;
     flex-shrink:0;
-    min-width:250px;
+    min-width:350px;
 }
 .profile-container > .hobbies{
     padding:20px;
@@ -122,7 +140,7 @@ export default {
     color:$primary_darker;
     font-size:18px;
     font-weight:400;
-    font-family:'Segoe UI';
+    font-family:'Concert One';
 }
 .progressbar > .progress-container{
     width:60%;
@@ -187,19 +205,19 @@ h1,h2,h3{
 }
 .details h1{
     color:$primary_darker;
-    font-size:35px;
+    font-size:36px;
     font-weight:700;
 }
 .details h2{
     color: $primary_dark;
     font-weight:400;
-    font-size: 17px;
+    font-size: 19px;
     margin-top:6px;
 }
 .details h3{
     color: $primary_light;
-    font-weight:300;
-    font-size:17px;
+    font-weight:200;
+    font-size:16px;
 }
 .details #contact{
     margin: 0;
@@ -215,14 +233,33 @@ h1,h2,h3{
     max-width:430px;
     background:$primary_dark;
     color:white;
-    font-family: 'Segoe UI';
-    font-size:14px;
-    font-weight:600;
+    font-family: 'Concert One';
+    font-size:16px;
+    font-weight:400;
     cursor:pointer;
     transition:all 200ms ease-in-out;
 }
 .details #contact:hover{
     transform:scale(1.07);
 }
-
+@media screen and (max-width:850px){
+.profile-container{
+    display:flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content:flex-start;
+    justify-items:flex-start;
+    padding:20px;
+    padding-top:100px;
+}
+.profile-container > .details, .profile-container > .hobbies{
+    max-width:100%;
+    width:100%!important;
+    height:auto;
+}
+.details #contact{
+    margin:50px;
+    width:80vw;
+}
+}
 </style>

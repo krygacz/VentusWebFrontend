@@ -1,7 +1,7 @@
 <template>
     <div id="home">
         <Header @return="back" @done="process" :type="'HeaderInit'" :profile="profile" />
-        <component :is="type" @ready="ready" @error="errorHandle" ref="content"/>
+        <component :is="type" @ready="ready" @done="next" @error="errorHandle" ref="content"/>
         <transition name="er">
             <div v-if="error" class="errormsg"><span>{{error}}</span></div>
         </transition>
@@ -41,6 +41,9 @@ export default {
         },
         ready: function(){
             this.$emit('load', false);
+        },
+        next: function(){
+            this.$emit('load', true);
         },
         errorHandle: function(e){
             this.error = e;
@@ -124,7 +127,7 @@ export default {
 .errormsg > span{
     position:relative;
     margin:auto;
-    font-family: 'Segoe UI';
+    font-family: 'Concert One';
     font-weight:300;
     font-size:28px;
 }

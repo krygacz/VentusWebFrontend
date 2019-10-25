@@ -1,12 +1,12 @@
 <template>
-    <div class="card" >
+    <div class="card" @click="profile">
         <div class="head">
-            <img src=""/>
+            <img loading="lazy" :src="(card.picture)?card.picture:'https://ventusapp.herokuapp.com/profile_placeholder.png'">
             <span class="big">{{card.name}}</span>
             <span class="small">{{card.location}}</span>
         </div>
         <div class="match-info">
-            <div class="progressbar" :class="{low:item.percentage<35, mid:item.percentage>= 35 && item.percentage < 70, high: item.percentage > 70}" v-for="item in card.hobbies" :key="item.id">
+            <div class="progressbar" :class="{low:item.percentage<35, mid:item.percentage>= 35 && item.percentage < 70, high: item.percentage > 70}" v-for="item in card.top" :key="item.id">
                 <span class="label">{{item.name}}</span>
                 <div class="progress-container"  >
                     <div class="progress-value" :style="{width: item.percentage + '%'}"></div>
@@ -28,6 +28,11 @@ export default {
         return{
             errored:false
         }
+    },
+    methods:{
+        profile: function(){
+            this.$router.push({name:'profile', params:{id: this.card.id}})
+        }
     }
     
 }
@@ -36,7 +41,7 @@ export default {
 <style lang="scss" scoped>
 .card{
     width:300px;
-    height:200px;
+    height:auto;
     border:1px solid $border_color;
     border-radius:10px;
     background-color:$card_background_color;
@@ -47,8 +52,12 @@ export default {
     align-items:flex-start;
     box-sizing: border-box;
     padding:28px;
-    margin:30px;
+    padding-bottom:22px;
+    padding-top:24px;
+    margin:0 auto;
+    margin-bottom:40px;
     color:$primary_darker;
+    cursor:pointer;
     box-shadow: 2px 3px 7px 0px $shadow_color;
 }
 .card > .head{
@@ -71,22 +80,22 @@ export default {
 }
 .head > img{
     grid-area: 1 / 1 / 3 / 2;
-    height:100%;
-    width:100%;
+    height:50px;
+    width:50px;
     padding:5px;
     border-radius:100%;
 }
 .head > .big{
     grid-area: 1 / 2 / 2 / 4;
     align-self:center;
-    font-size:15px;
+    font-size:17px;
     font-weight: 600;
     color:$primary_dark;
 }
 .head > .small{
     grid-area: 2 / 2 / 3 / 4;
     align-self:flex-start;
-    font-size:12px;
+    font-size:13px;
     font-weight:400;
 }
 .card > .match-info{
@@ -94,7 +103,7 @@ export default {
     flex-flow:column nowrap;
     width:100%;
     height:auto;
-    padding-top:15px;
+    padding-top:16px;
 }
 .match-info > .progressbar{
     width:100%;
@@ -109,7 +118,7 @@ export default {
     padding:0;
     margin:0;
     margin-top:-2px;
-    font-size:14px;
+    font-size:16px;
 }
 .progressbar > .progress-container{
     width:50%;
@@ -152,6 +161,12 @@ export default {
 @keyframes prog{
     from{
         width:0;
+    }
+}
+@media screen and (max-width:700px){
+    .card{
+        width:90%;
+        max-width: 350px;
     }
 }
 </style>

@@ -78,7 +78,6 @@ export default {
 
 .switch {
     display:inline-block;
-    height:80px;
 	cursor: pointer;
     box-sizing:content-box;
     overflow:hidden;
@@ -102,7 +101,6 @@ export default {
     justify-content:center;
     justify-items:center;
 	height: inherit;
-    height:100%;
     width:100%;
 	font-size: 19px;
 	border-radius: inherit;
@@ -111,14 +109,14 @@ export default {
     color: $primary_light;
     border: 2px solid $primary_light;
     border-radius:10px;
-    padding:30px;
+    padding: 20px 30px;
     transition: All 0.3s ease;
 }
 .switch-label > span{
     display:inline-block;
-    font-family: 'Segoe UI';
+    font-family: 'Concert One';
     font-weight:400;
-    font-size:22px;
+    font-size:26px;
     user-select:none;
 }
 .switch{
@@ -129,5 +127,20 @@ export default {
     color:white;
 }
 
-
+@media screen and (max-width:700px){
+    .switch{
+        padding:10px;
+    }
+    .switch-label{
+        padding: 12px 18px;
+        
+    }
+    .switch-label > span{
+        font-size: 22px;
+    }
+    .category-container{
+        padding:46px;
+        padding-top:100px;
+    }
+}
 </style>

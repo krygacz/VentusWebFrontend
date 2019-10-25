@@ -4,42 +4,42 @@
         <form @input="checkValidation()" class="form" ref="form">
             <div  class="input-wrapper">
                 <input v-model="name" type="text" placeholder=" " ref="el1" required>
-                <span>Imię</span>
+                <span>First Name</span>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
             <div  class="input-wrapper">
                 <input v-model="location" type="text" placeholder=" " ref="el2" required>
-                <span>Miejsce zamieszkania</span>
+                <span>Address</span>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
             <div  class="input-wrapper half">
                 <input v-model="age" type="number" placeholder=" " ref="el3" required>
-                <span>Wiek</span>
+                <span>Birth year</span>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
             <div  class="input-wrapper half">
                 <label class="switch">
                     <input v-model="gender" class="switch-input" type="checkbox"/>
-                    <span class="switch-label" data-on="Mężczyzna" data-off="Kobieta"></span> 
+                    <span class="switch-label" data-on="Male" data-off="Female"></span> 
                     <span class="switch-handle"></span> 
             </label>
             </div>
             <div  class="input-wrapper">
                 <input v-model="link" type="url" placeholder=" " ref="el4" required>
-                <span>Link do Facebooka / Messengera</span>
+                <span>Link to your Facebook profile</span>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
             <div class="input-multiple-wrapper">
-                <span>Zdjęcie profilowe:</span>
+                <span>Profile picture:</span>
                 <input @change="checkFile" type="file" name="file" id="file" class="inputfile"  ref="fileSelector"/>
                 <label :class="{'accepted': this.picture != null}" for="file" ref="fileSelectorLabel">Choose a file</label>
             </div>
             <div class="input-multiple-wrapper checkbox-wrapper">
-                <span>Mam ukończone 13 lat <br>i akceptuję <a href="#" >warunki użytkowania</a></span>
+                <span>I'm at least 13 years old<br>and I accept<a href="#" >our privacy policy</a></span>
                 <label class="checkbox">
                     <input type="checkbox" required>
                     <span class="slider"></span>
@@ -99,10 +99,10 @@ export default {
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
                         that.$router.push({name:'home'});
-                    } else that.error = "Wystąpił błąd przy logowaniu";
+                    } else that.error = "We couldn't log you in";
                 })
                 .catch((e) => {
-                    that.error = 'Wystąpił błąd: ';
+                    that.error = 'There was an error: ';
                     if(e.response.data.error){
                         that.error = e.response.data.error;
                     } else {
@@ -163,25 +163,29 @@ export default {
     left:0;
     right:0;
     bottom:0;
+    padding:15px;
     max-width:100vw;
-    min-height:720px;
+    min-height:620px;
 }
 .container > img{
     display:block;
-    width:40vw;
-    max-width:400px;
-    padding-bottom:40px;
+    box-sizing: border-box;
+    width:44vw;
+    max-width:450px;
+    padding:20px;
+    padding:40px;
 }
 .form{
     display:flex;
     flex-flow:row wrap;
     justify-content: space-between;
     align-content: center;
-    width:45vw;
+    width:42vw;
     max-width:420px;
     background: $card_background_color;
     border: 1px solid $border_color;
     padding:50px;
+    padding-top:38px;
     border-radius:20px;
     box-shadow: 8px 8px 24px 0 $shadow_color_dark;
 }
@@ -212,7 +216,7 @@ export default {
 .input-multiple-wrapper span{
     padding:8px;
     display:inline-block;
-    font-size:20px;
+    font-size:22px;
     font-family:'Segoe UI';
     font-weight:400;
     line-height:1.2;
@@ -243,16 +247,17 @@ span > a, span > a:visited{
     left:0;
     bottom:0;
     background:transparent;
-    padding:10px;
+    padding:2px;
     padding-left:15px;
     padding-right:30px;
     border-radius:5px;
     border:2px solid $border_color;
     color: $primary_light;
-    font-size:18px;
-    font-family:'Segoe UI';
-    font-weight:600;
+    font-size:19px;
+    font-family:'Concert One';
+    font-weight:400;
     outline:none;
+    box-shadow:none;
     transition:all 200ms;
 }
 .input-wrapper > span {
@@ -372,7 +377,7 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 .errormsg > span{
     position:relative;
     margin:auto;
-    font-family: 'Segoe UI';
+    font-family: 'Concert One';
     font-weight:300;
     font-size:28px;
 }
@@ -409,7 +414,8 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 	position: relative;
 	display: block;
 	height: inherit;
-	font-size: 19px;
+    font-size: 20px;
+    font-family:'Concert One';
 	border-radius: inherit;
     box-sizing:border-box;
     transition: All 0.3s ease;
@@ -423,7 +429,7 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 	top: 0;
 	left: 0;
     text-align: center;
-    padding-top:10px;
+    padding-top:12px;
     border-radius:5px;
 }
 .switch-label::before {
@@ -513,6 +519,7 @@ input:checked + .slider:before {
     background-color: white;
     height:100%;
     box-sizing:border-box;
+    font-family:'Concert One';
     border:2px solid $primary_light;
     border-radius:5px;
     padding-left:15px;
@@ -547,6 +554,43 @@ input:checked + .slider:before {
     }
     to {
         transform:rotate(360deg);
+    }
+}
+
+@media screen and (max-width:899px) {
+    .container{
+        flex-direction: column;
+        justify-content:flex-start;
+        justify-items:flex-start;
+        align-content:center;
+        align-items:center;
+        min-height:auto;
+        max-height:none;
+        height:auto;
+
+        padding-top:0;
+    }
+    .container > img{
+        padding:40px;
+        padding-top:35px;
+        width:90vw;
+    }
+    .container > form{
+        width:90vw;
+        box-shadow:none;
+        border:none;
+        border-radius:0;
+        padding:10px;
+        padding-bottom:50px;
+        background:transparent;
+    }
+    .input-multiple-wrapper span{
+        font-size:16px;
+    }
+}
+@media screen and (max-height:700px) and (min-width:900px) {
+    .container > form{
+        transform:scale(0.9);
     }
 }
 </style>

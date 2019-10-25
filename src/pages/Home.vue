@@ -32,7 +32,7 @@ export default {
         var that = this;
         this.api.get('/user/recommendations')
                 .then((response) => {
-                    if(response.data.recommendations){
+                    if(response.data){
                         this.recommendations = Object.assign({}, response.data, this.recommendations);
                     } else {
                         that.$emit('error', 'no data received');
@@ -48,17 +48,21 @@ export default {
 
 <style lang="scss" scoped>
 .card-container{
-    display:flex;
-    flex-flow: row wrap;
-    align-items: top;
-    justify-content:left;
-    position:absolute;
+    max-width:100vw;
+    columns: 340px 6;
+    column-gap:0;
+    align-items:center;
     top:0;
     left:0;
     right:0;
     bottom:0;
     padding:50px;
-    padding-top:100px;
-
+    padding-top:130px;
+}
+@media screen and (max-width:600px){
+    .card-container{
+        padding:30px;
+        padding-top:105px;
+    }
 }
 </style>

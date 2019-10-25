@@ -8,7 +8,7 @@
                 <i class="material-icons error">close</i>
             </div>
             <div class="input-wrapper">
-                <input type="password" v-model="password" minlength="8" placeholder="Hasło" ref="password" required>
+                <input type="password" v-model="password" minlength="8" placeholder="Password" ref="password" required>
                 <i class="material-icons ok">done</i>
                 <i class="material-icons error">close</i>
             </div>
@@ -133,12 +133,13 @@ export default {
     top:50%;
     left:50%;
     transform:translate(-50%, -50%);
+    padding:15px;
     transition:all 200ms;
 }
 .container > img{
     display:block;
     width:70vw;
-    max-width:500px;
+    max-width:450px;
     margin-bottom:10vh;
     margin-top:auto;
 }
@@ -167,16 +168,17 @@ export default {
     left:0;
     bottom:0;
     background:transparent;
-    padding:10px;
+    padding:2px;
     padding-left:15px;
     padding-right:30px;
     border-radius:5px;
     border:2px solid $border_color;
     color: $primary_light;
-    font-size:18px;
-    font-family:'Segoe UI';
-    font-weight:600;
+    font-size:19px;
+    font-family:'Concert One';
+    font-weight:400;
     outline:none;
+    box-shadow:none;
     transition:all 200ms;
 }
 .input-wrapper > input::placeholder{
@@ -260,7 +262,7 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 }
 .form > button > span{
     font-size:17px;
-    font-family:'Segoe UI';
+    font-family:'Concert One';
     margin-top:-2px;
 }
 .login{
@@ -289,7 +291,7 @@ input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
 .errormsg > span{
     position:relative;
     margin:auto;
-    font-family: 'Segoe UI';
+    font-family: 'Concert One';
     font-weight:300;
     font-size:28px;
 }

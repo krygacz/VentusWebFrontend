@@ -64,6 +64,13 @@ export default {
       const toDepth = to.path.split('/').length
       const fromDepth = from.path.split('/').length
       this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      if(to.name == 'home'){
+        this.loading = true;
+        this.transitionName = 'slide-right';
+      }
+      if(this.loading){
+        this.transitionName = 'fade';
+      }
       if(this.$route.params.force_reload){
         this.forceUpdate();
       }
@@ -189,8 +196,10 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none!important;
     margin: 0; 
 }
-
 input[type=number] {
     -moz-appearance:textfield; 
+}
+button::-moz-focus-inner {
+  border: 0;
 }
 </style>

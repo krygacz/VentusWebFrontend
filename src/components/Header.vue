@@ -1,5 +1,5 @@
 <template>
-    <component @done="done" @return="back" :is="type" :profile="profile"></component>
+    <component @done="done" @return="back" @home="home" :is="type" :profile="profile"></component>
 </template>
 <script>
 import HeaderStandard from './headers/HeaderStandard.vue'
@@ -18,6 +18,9 @@ export default {
     },
     back:function(){
       this.$emit('return');
+    },
+    home:function(){
+      this.$emit('home');
     }
   }
 }

@@ -61,4 +61,16 @@ export default {
     .header > #done > i.material-icons{
         font-size:43px;
     }
+@media screen and (max-width:700px){
+    .header{
+        height:60px;
+    }
+    .header  i.material-icons{
+        font-size:27px!important;
+    }
+    .header > div#return, .header > div#done{
+        margin-left:25px;
+        margin-right:25px;
+    }
+}
 </style>
