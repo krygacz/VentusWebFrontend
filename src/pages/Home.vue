@@ -1,6 +1,6 @@
 <template>
     <div id="home">
-        <Header :type="'HeaderStandard'" :profile="profile" />
+        <Header :type="'HeaderStandard'" v-if="profile != null" :profile="profile" />
         <div class="card-container">
             <UserCard v-for="card in recommendations" :key="card.id" :card="card" />
         </div>

@@ -80,7 +80,7 @@ export default {
                     if(response.data.token && response.data.refresh_token){
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
-                        that.$router.push({name:'home', params:{'force_reload':true}});
+                        that.$router.push({name:'home'});
                     } else that.error = "Wystąpił błąd przy logowaniu";
                 })
                 .catch((e) => {
