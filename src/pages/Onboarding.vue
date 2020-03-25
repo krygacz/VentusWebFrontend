@@ -2,9 +2,6 @@
     <div id="home">
         <Header @return="back" @done="process" :type="'HeaderInit'" :profile="profile" />
         <component :is="type" @ready="ready" @done="next" @error="errorHandle" ref="content"/>
-        <transition name="er">
-            <div v-if="error" class="errormsg"><span>{{error}}</span></div>
-        </transition>
     </div>
 </template>
 
@@ -27,8 +24,7 @@ export default {
     data(){
         return{
             type:null,
-            done:false,
-            error:null
+            done:false
         }
     },
     methods:{
@@ -46,9 +42,7 @@ export default {
             this.$emit('load', true);
         },
         errorHandle: function(e){
-            this.error = e;
-            let that = this;
-            setTimeout(()=>{that.error = null;}, 3000);
+            this.$emit('error_popup', e);
         },
         paramsHandle: function(){
             if(this.$route.params.stage){
@@ -84,7 +78,7 @@ export default {
                     }
                 })
                 .catch((e) => {
-                    that.$emit('error', e.message);
+                    that.$emit('error_popup', e.message);
                 })
     },
     watch: {
@@ -110,33 +104,8 @@ export default {
     padding-top:100px;
 
 }
-.errormsg{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    height:60px;
-    display:flex;
-    justify-content: center;
-    align-content: center;
-    background: $error_light;
-    color:white;
-    z-index:9999999;
-    transition:all 250ms;
-}
-.errormsg > span{
-    position:relative;
-    margin:auto;
-    font-family: 'Concert One';
-    font-weight:300;
-    font-size:28px;
-}
-.er-enter-active, .er-leave-active {
-  height:60px;
-  opacity:1;
-}
-.er-enter, .er-leave-to{
-  height:0;
-  opacity:0.5;
-}
+
+</style>
+<style lang="scss">
+@include error-bottom;
 </style>

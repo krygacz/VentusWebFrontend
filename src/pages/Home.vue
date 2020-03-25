@@ -49,7 +49,7 @@ export default {
 <style lang="scss" scoped>
 .card-container{
     max-width:100vw;
-    columns: 340px 6;
+    columns: 340px 3;
     column-gap:0;
     align-items:center;
     top:0;
@@ -58,6 +58,7 @@ export default {
     bottom:0;
     padding:50px;
     padding-top:130px;
+    white-space: nowrap;
 }
 @media screen and (max-width:600px){
     .card-container{

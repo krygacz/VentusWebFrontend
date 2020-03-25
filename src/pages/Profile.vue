@@ -131,19 +131,27 @@ export default {
     flex-direction:row nowrap;
     justify-content:space-between;
     align-items:center;
-    padding: 7px 0px 7px 0px;
+    padding: 10px 0px 10px 0px;
 }
 .progressbar > .label{
     padding:0;
+    padding-right:15px;
     margin:0;
-    margin-top:-4px;
+    margin-top:1px;
+    max-width:50%;
     color:$primary_darker;
-    font-size:18px;
-    font-weight:400;
-    font-family:'Concert One';
+    font-size:$progress_label_size_profile;
+    font-family: 'Baloo Da 2';
+    font-weight:600;
+    line-height:1;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    box-sizing: border-box;
 }
 .progressbar > .progress-container{
     width:60%;
+    min-width:60%;
     height:12px;
     justify-self:flex-end;
     border-bottom-left-radius:12px 100%;
@@ -182,7 +190,7 @@ export default {
 }
 
 .circle{
-    margin-bottom:8px;
+    margin-bottom:25px;
 }
 .circle img{
     border-radius:50%;
@@ -199,9 +207,10 @@ export default {
 }
 h1,h2,h3{
     margin: 0 auto;
-    font-family:'Segoe UI';
+    font-family:'Baloo Da 2';
     display:inline-block;
     text-align: center;
+    line-height:1;
 }
 .details h1{
     color:$primary_darker;
@@ -212,12 +221,13 @@ h1,h2,h3{
     color: $primary_dark;
     font-weight:400;
     font-size: 19px;
-    margin-top:6px;
+    margin-top:10px;
 }
 .details h3{
     color: $primary_light;
     font-weight:200;
     font-size:16px;
+    margin-top:2px;
 }
 .details #contact{
     margin: 0;
@@ -233,9 +243,9 @@ h1,h2,h3{
     max-width:430px;
     background:$primary_dark;
     color:white;
-    font-family: 'Concert One';
-    font-size:16px;
-    font-weight:400;
+    font-family: 'Baloo Da 2';
+    font-size:17px;
+    font-weight:500;
     cursor:pointer;
     transition:all 200ms ease-in-out;
 }

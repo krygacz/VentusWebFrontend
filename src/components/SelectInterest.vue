@@ -139,21 +139,22 @@ export default {
     transition: all 200ms ease-in-out;
 }
 .interest > .label > .big{
-    font-size:48px;
-    font-family:'Concert One';
-    font-weight:400;
+    font-size:52px;
+    font-family:'Baloo Da 2';
+    font-weight:600;
     color:$primary_dark;
     padding:25px;
     padding-bottom:35px;
     margin:auto;
 }
 .interest > .label > .small{
-    font-size:22px;
-    font-family:'Concert One';
-    font-weight:200;
+    font-size:23px;
+    font-family:'Baloo Da 2';
+    font-weight:500;
     padding:10px;
     padding-left: 18px;
     padding-right:18px;
+    padding-bottom:8px;
     background:$accent_teal;
     color:white;
     border-radius:7px;

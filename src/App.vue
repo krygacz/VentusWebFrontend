@@ -5,7 +5,10 @@
       <div class="loader-container" v-if="loading && !errored"><div class="loader"></div></div>
     </transition>
     <transition :name="transitionName">
-      <router-view  v-on:error="errorHandle" v-if="!errored && ready" v-model="loading" :profile="profile"> </router-view>
+      <router-view  v-on:error="errorHandle" v-on:error_popup="errorPopup" v-if="!errored && ready" v-model="loading" :profile="profile"> </router-view>
+    </transition>
+    <transition name="er">
+        <div v-if="popup_msg" class="errormsg"><span>{{popup_msg}}</span></div>
     </transition>
   </div>
 </template>
@@ -18,6 +21,7 @@ export default {
     return{
       errored:false,
       errormsg:'',
+      popup_msg:null,
       loading:true,
       ready:false,
       transitionName:'slide-left',
@@ -28,6 +32,11 @@ export default {
     errorHandle: function(e) {
       this.errormsg = e;
       this.errored = true;
+    },
+    errorPopup: function(e){
+      this.popup_msg=e;
+      let that = this;
+      window.setTimeout(()=>{that.popup_msg=null}, 3500);
     },
     refreshData: function(){
       var that = this;
@@ -185,21 +194,7 @@ export default {
   right:0;
   margin:0;
   padding:0;
-  font-family: 'Segoe UI';
+  font-family: 'Baloo Da 2';
 }
-</style>
-
-<style>
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    display: none; 
-    -webkit-appearance: none!important;
-    margin: 0; 
-}
-input[type=number] {
-    -moz-appearance:textfield; 
-}
-button::-moz-focus-inner {
-  border: 0;
-}
+@include error-styling;
 </style>

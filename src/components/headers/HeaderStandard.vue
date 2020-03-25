@@ -2,7 +2,7 @@
     <div class="header" id="header">
         <div @click="$emit('menu')" id="menu"><i class="material-icons">menu</i></div>
         <img @click="$emit('home')" id="logo" src="@/assets/logo.svg" />
-        <div @click="$emit('profile')" id="profile_link" ><img loading="lazy" :src="(profile.picture)?profile.picture:'https://ventusapp.herokuapp.com/profile_placeholder.png'"><p>{{profile.first_name}}</p></div>
+        <div @click="$emit('profile')" id="profile_link" ><img loading="lazy" :src="(profile.picture)?profile.picture:'https://ventusapp.herokuapp.com/profile_placeholder.png'"></div>
     </div>
 </template>
 
@@ -59,6 +59,7 @@ export default {
     display:flex;
     flex-flow: row nowrap;
     align-items: center;
+    margin-left:30px;
     margin-right:30px;
     transition:all 300ms ease-in-out;
     cursor:pointer;
@@ -72,16 +73,6 @@ export default {
     width: 35px;
     height: 35px;
 }
-.header > #profile_link > p{
-    display:inline-block;
-    margin:0;
-    padding:0;
-    margin-left:10px;
-    color:$primary_darker;
-    font-family:'Segoe UI';
-    font-weight:400;
-    font-size: 16px;
-}
 @media screen and (max-width:700px){
     .header{
         height:60px;
@@ -92,9 +83,6 @@ export default {
     .header > div#return, .header > div#done{
         margin-left:25px;
         margin-right:25px;
-    }
-    .header > #profile_link > p{
-        display:none;
     }
     .header > #profile_link > img{
         width:30px;

@@ -28,7 +28,7 @@ export default {
         padding:0;
         border-bottom: 2px solid $border_color;
         box-shadow: 0px 3px 9px -2px $shadow_color;
-        z-index:9999;
+        z-index:999;
     }
     .header > img#logo{
         height:40%;

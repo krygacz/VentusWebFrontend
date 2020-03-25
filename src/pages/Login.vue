@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <img src="@/assets/logo.svg" />
-        <form @input="errorUpdate" class="form">
+        <form class="form">
             <div  class="input-wrapper">
                 <input @change="checkEmail" v-model="email" type="email" placeholder="E-mail" ref="email" required>
                 <i class="material-icons ok">done</i>
@@ -17,9 +17,6 @@
                 <i v-if="emailStatus == 1" :class="{'spin': form_loading}" class="material-icons error">{{form_loading?'refresh':'arrow_forward'}}</i>
             </button>
         </form>
-        <transition name="er">
-            <div v-if="error" class="errormsg"><span>{{error}}</span></div>
-        </transition>
     </div>
 </template>
 
@@ -36,8 +33,7 @@ export default {
             form_loading: false,
             email: null,
             password: null,
-            emailStatus: 0,
-            error: null
+            emailStatus: 0
         }
     },
     methods:{
@@ -47,7 +43,6 @@ export default {
                 this.emailStatus = 0;
                 return;
             }
-            this.error = null;
             var vf = new FormData();
             vf.append("email", this.email);
             this.axios.post('/check_email',vf)
@@ -73,7 +68,6 @@ export default {
         },
         login: function(){
             var that = this;
-            this.error = null;
             this.form_loading = true;
             this.axios.post('/login_check',{username: this.email, password: this.password})
                 .then((response) => {
@@ -81,16 +75,16 @@ export default {
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
                         that.$router.push({name:'home'});
-                    } else that.error = "Wystąpił błąd przy logowaniu";
+                    } else that.$emit('error_popup', 'We have an internal issue :c');
                 })
                 .catch((e) => {
-                    that.error = 'Wystąpił błąd: ';
+                    let err = 'There was an error: ';
                     if(e.response.data.error){
-                        that.error = e.response.data.error;
+                        err = e.response.data.error;
                     } else {
-                        that.error += e.message;
+                        err += e.message;
                     }
-                    window.setTimeout(this.errorUpdate, 3500);
+                    that.$emit('error_popup', err);
                 })
                 .finally(()=>{that.form_loading = false})
         },
@@ -98,7 +92,6 @@ export default {
             if(!this.$refs.password.checkValidity() || !this.$refs.email.checkValidity()){
                 return;
             }
-            this.error = null;
             var that = this;
             this.$router.push({name:'register', params:{email: that.email, password: that.password}});
         },
@@ -113,11 +106,7 @@ export default {
                     this.signup();
                     break;
             }
-        },
-        errorUpdate: function(){
-            this.error = null;
         }
-        
     }
 }
 </script>
@@ -151,178 +140,11 @@ export default {
     max-width:400px;
     padding-bottom:100px;
 }
-.form .input-wrapper{
-    box-sizing:border-box;
-    width:100%;
-    height: 50px;
-    position: relative;
-    margin-top:15px;
-}
-.input-wrapper > input{
-    box-sizing:border-box;
-    position:relative;
-    width:100%;
-    height:100%;
-    top:0;
-    right:0;
-    left:0;
-    bottom:0;
-    background:transparent;
-    padding:2px;
-    padding-left:15px;
-    padding-right:30px;
-    border-radius:5px;
-    border:2px solid $border_color;
-    color: $primary_light;
-    font-size:19px;
-    font-family:'Concert One';
-    font-weight:400;
-    outline:none;
-    box-shadow:none;
-    transition:all 200ms;
-}
-.input-wrapper > input::placeholder{
-    color:$primary_light;
-    opacity:0.7;
-}
-.input-wrapper > input:focus, .input-wrapper > input:not(:placeholder-shown){
-    border-width:4px;
-}
-.form input:valid{
-    border-color: $primary_light;
-    color: $primary_light;
-}
-.form input:invalid{
-    border-color:$accent_orange;
-    color: $accent_orange;
-}
-.input-wrapper > input:placeholder-shown{
-    border:2px solid $border_color;
-    color: $primary_light;
-}
 
-.input-wrapper >  i.material-icons{
-    opacity:0;
-    position:absolute;
-    right:15px;
-    top:50%;
-    transform:translateY(-50%);
-    color:transparent;
-    transition: opacity 200ms;
-    transition-delay:100ms;
-    pointer-events:none;
-    user-select:none;
-    z-index:-1;
-}
-input:valid ~ .ok{
-    opacity:0.4;
-    color: $primary_light;
-    transition-delay:0ms;
-}
-input:invalid ~ .error{
-    opacity:1;
-    color: $accent_orange;
-    transition-delay:0ms;
-}
-input:placeholder-shown ~ .ok,input:placeholder-shown ~ .error{
-    opacity:0;
-}
-.form > button{
-    width:auto;
-    display: flex;
-    align-items:center;
-    align-content:center;
-    justify-content:center;;
-    width:50%;
-    min-width:100px;
-    height:0;
-    border:2px solid $primary_light;
-    border-radius: 40px;
-    background-color: $primary_light;
-    color: #fff;
-    cursor:pointer;
-    margin:auto;
-    margin-top:0;
-    font-size:18px;
-    font-weight:400;
-    transform:scale(0);
-    opacity:0;
-    transform-origin:top center;
-    outline:none;
-    pointer-events:none;
-    transition: all 250ms;
-}
-.form > button:hover{
-    transform:scale(1.05);
-}
-.form > button > i.material-icons{
-    justify-self:center;
-    align-self:center;
-    padding:5px;
-}
-.form > button > span{
-    font-size:17px;
-    font-family:'Concert One';
-    margin-top:-2px;
-}
-.login{
-    color:white;
-    background-color:$primary_light;
-    border-color:$primary_light;
-}
-.register{
-    color:$primary_light;
-    background-color:transparent;
-    border-color:$primary_light;
-}
-.errormsg{
-    position:fixed;
-    left:0;
-    right:0;
-    top:0;
-    height:60px;
-    display:flex;
-    justify-content: center;
-    align-content: center;
-    background: $error_light;
-    color:white;
-    transition:all 250ms;
-}
-.errormsg > span{
-    position:relative;
-    margin:auto;
-    font-family: 'Concert One';
-    font-weight:300;
-    font-size:28px;
-}
-.er-enter-active, .er-leave-active {
-  height:60px;
-  opacity:1;
-}
-.er-enter, .er-leave-to{
-  height:0;
-  opacity:0.5;
-}
-.form > button:not(:disabled){
-    margin-top:32px;
-    height:40px;
-    opacity:1;
-    transform-origin:top center;
-    transform: scale(1);
-    pointer-events:all;
-}
-.spin {
-  animation-name: spin;
-  animation-duration:1000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-}
-@keyframes spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
-    }
+@include input-styling;
+@include login-button-styling;
+.form .input-wrapper{
+    margin-top:15px;
+    margin-bottom:0;
 }
 </style>

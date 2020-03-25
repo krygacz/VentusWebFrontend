@@ -40,7 +40,8 @@ export default {
 
 <style lang="scss" scoped>
 .card{
-    width:300px;
+    max-width:310px;
+    min-width:220px;
     height:auto;
     border:1px solid $border_color;
     border-radius:10px;
@@ -52,13 +53,16 @@ export default {
     align-items:flex-start;
     box-sizing: border-box;
     padding:28px;
-    padding-bottom:22px;
+    padding-bottom:20px;
     padding-top:24px;
     margin:0 auto;
     margin-bottom:40px;
     color:$primary_darker;
     cursor:pointer;
     box-shadow: 2px 3px 7px 0px $shadow_color;
+    font-family:'Baloo Da 2';
+    break-inside: avoid-column;
+    transform:translateZ(0); //Chrome shadow cropping fix
 }
 .card > .head{
     height:50px;
@@ -72,11 +76,17 @@ export default {
     justify-items:center;
     align-items: center;
     overflow:hidden;
+    text-overflow:ellipsis;
 }
 .head > span{
     padding:0;
     margin:0;
     justify-self:left;
+    display:inline-block;
+    width:100%;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    box-sizing:border-box;
 }
 .head > img{
     grid-area: 1 / 1 / 3 / 2;
@@ -87,16 +97,18 @@ export default {
 }
 .head > .big{
     grid-area: 1 / 2 / 2 / 4;
-    align-self:center;
-    font-size:17px;
+    align-self:flex-end;
+    font-size:$card_header;
     font-weight: 600;
     color:$primary_dark;
+    line-height:1.2;
 }
 .head > .small{
     grid-area: 2 / 2 / 3 / 4;
     align-self:flex-start;
-    font-size:13px;
-    font-weight:400;
+    font-size:$card_details;
+    font-weight:500;
+    line-height:1.2;
 }
 .card > .match-info{
     display:flex;
@@ -112,16 +124,26 @@ export default {
     flex-direction:row nowrap;
     justify-content:space-between;
     align-items:center;
-    padding: 5px 0px 5px 0px;
+    padding: 6px 0px 6px 0px;
 }
 .progressbar > .label{
+    display:block;
+    max-width:50%;
     padding:0;
+    padding-right:10px;
     margin:0;
     margin-top:-2px;
-    font-size:16px;
+    font-size:$progress_label_size;
+    font-family: 'Baloo Da 2';
+    line-height:1;
+    font-weight:600;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    box-sizing:border-box;
 }
 .progressbar > .progress-container{
     width:50%;
+    min-width:50%;
     height:9px;
     justify-self:flex-end;
     border-bottom-left-radius:9px 100%;
@@ -163,10 +185,15 @@ export default {
         width:0;
     }
 }
-@media screen and (max-width:700px){
+@media screen and (max-width:1135px){
+    .card{
+        max-width:330px;
+    }
+}
+@media screen and (max-width:800px){
     .card{
         width:90%;
-        max-width: 350px;
+        max-width: 400px;
     }
 }
 </style>

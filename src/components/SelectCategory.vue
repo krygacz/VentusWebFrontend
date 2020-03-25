@@ -30,6 +30,7 @@ export default {
             }
             if(checked.length == 0){
                 this.$emit('error', 'Please select at least one category');
+                that.$emit('ready');
                 return;
             }
             this.api.post('/user/category/new', checked)
@@ -107,15 +108,15 @@ export default {
     box-sizing:border-box;
     background:transparent;
     color: $primary_light;
-    border: 2px solid $primary_light;
+    border: 4px solid $primary_light;
     border-radius:10px;
     padding: 20px 30px;
     transition: All 0.3s ease;
 }
 .switch-label > span{
     display:inline-block;
-    font-family: 'Concert One';
-    font-weight:400;
+    font-family: 'Baloo Da 2';
+    font-weight:600;
     font-size:26px;
     user-select:none;
 }
