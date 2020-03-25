@@ -1,14 +1,23 @@
 <template>
     <div class="header" id="header">
-        <div @click="$emit('return')" id="return"><i class="material-icons">arrow_back_ios</i></div>
+        <div @click="back" id="return"><i class="material-icons">arrow_back_ios</i></div>
         <img id="logo" src="@/assets/logo.svg" />
-        <div @click="$emit('done')" id="done" ><i class="material-icons">check</i></div>
+        <div @click="done" id="done" ><i class="material-icons">check</i></div>
     </div>
 </template>
 
 <script>
+import EventBus from '../../event-bus';
 export default {
-  name: 'HeaderInit'
+  name: 'HeaderInit',
+  methods: {
+        back:function(){
+            this.$router.back();
+        },
+        done:function(){
+            EventBus.$emit("header_done");
+        }
+  }
 }
 </script>
 

@@ -16,6 +16,7 @@
 <script>
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
+import EventBus from '../event-bus';
 export default {
     name: 'SelectInterest',
     props: ['profile'],
@@ -27,7 +28,6 @@ export default {
             categories:[],
             current: null,
             total: 0,
-            errored:false,
             sliderOptions:{
                 contained:true,
                 height:20,
@@ -68,12 +68,11 @@ export default {
             this.api.post('/user/subcategory/new', {subcategory: this.current.id, percentage: this.current.percentage})
                 .then(() => {
                     if(!that.load()){
-                        that.$emit('ready');
                         that.$router.push({name: 'home'});
                     }
                 })
                 .catch((e) => {
-                    that.$emit('error', e.message);
+                    EventBus.$emit('error_major', e.message);
                 })
         },
         process: function(){
@@ -82,6 +81,7 @@ export default {
         }
     },
     mounted(){
+        EventBus.$on('header_done', this.process);
         var that = this;
         this.api.post('/user/recommended_subcategories')
             .then((response) => {
@@ -92,12 +92,12 @@ export default {
                         that.categories.push(cat);
                     }
                     that.load();
-                }else that.$emit('error', 'no data received');
+                }else EventBus.$emit('error_major');
             })
             .catch((e) => {
-                that.$emit('error', e.message);
+                EventBus.$emit('error_major', e.message);
             })
-            .finally(function(){that.$emit('ready');})
+            .finally(function(){EventBus.$emit('loading', false);})
     }
 }
 </script>

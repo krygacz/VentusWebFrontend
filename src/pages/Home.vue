@@ -10,38 +10,33 @@
 <script>
 import Header from '../components/Header.vue'
 import UserCard from '../components/UserCard.vue'
+import EventBus from '../event-bus';
 export default {
     name: 'HomePage',
     components: {
         Header,
         UserCard
     },
-    props: ['loading', 'profile'],
-    model:{
-        prop: 'loading',
-        event:'load'
-    },
+    props: ['profile'],
     data(){
         return{
-            recommendations:[],
-            errored:false
+            recommendations:[]
         }
     },
     mounted(){
-        this.$emit('load', true);
-        var that = this;
+        EventBus.$emit('loading', true);
         this.api.get('/user/recommendations')
-                .then((response) => {
-                    if(response.data){
-                        this.recommendations = Object.assign({}, response.data, this.recommendations);
-                    } else {
-                        that.$emit('error', 'no data received');
-                    }
-                })
-                .catch((e) => {
-                    that.$emit('error', e.message);
-                })
-                .finally(function(){that.$emit('load', false);})
+            .then((response) => {
+                if(response.data){
+                    this.recommendations = Object.assign({}, response.data, this.recommendations);
+                } else {
+                    EventBus.$emit('error_major');
+                }
+            })
+            .catch((e) => {
+                EventBus.$emit('error_major', e.message);
+            })
+            .finally(function(){EventBus.$emit('loading', false);})
     }
 }
 </script>

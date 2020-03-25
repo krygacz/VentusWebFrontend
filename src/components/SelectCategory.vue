@@ -10,17 +10,18 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 export default {
     name: 'SelectCategory',
     props: ['profile'],
     data(){
         return{
-            categories:[],
-            errored:false
+            categories:[]
         }
     },
     methods: {
         process: function(){
+            EventBus.$emit('loading', true);
             let that = this;
             let checked = [];
             for(let cat of this.categories){
@@ -29,8 +30,8 @@ export default {
                 }
             }
             if(checked.length == 0){
-                this.$emit('error', 'Please select at least one category');
-                that.$emit('ready');
+                EventBus.$emit('loading', false);
+                EventBus.$emit('error_popup', 'Please select at least one category');
                 return;
             }
             this.api.post('/user/category/new', checked)
@@ -38,12 +39,13 @@ export default {
                     that.$router.push({name:'onboarding_specified', params:{stage:'interests'}});
                 })
                 .catch((e) => {
-                    that.$emit('error', e.message);
+                    EventBus.$emit('error_major', e.messge);
                 })
         }
     },
     mounted(){
         var that = this;
+        EventBus.$on('header_done', this.process);
         this.axios.get('/category/')
             .then((response) => {
                 if(response.data.length > 0){
@@ -51,12 +53,12 @@ export default {
                         cat.selected = false;
                         that.categories.push(cat);
                     }
-                }else that.$emit('error', 'no data received');
+                }else EventBus.$emit('error_major');
             })
             .catch((e) => {
-                that.$emit('error', e.message);
+                EventBus.$emit('error_major', e.message);
             })
-            .finally(function(){that.$emit('ready');})
+            .finally(function(){EventBus.$emit('loading', false);})
     }
 }
 </script>

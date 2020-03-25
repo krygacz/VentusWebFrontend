@@ -1,6 +1,6 @@
 <template>
     <div id="profile">
-        <Header :type="'HeaderStandard'" @home="home" :profile="profile" />
+        <Header :type="'HeaderStandard'" :profile="profile" />
         <div class="profile-container">
             <div class="details">
                 <radial-progress-bar class="circle"
@@ -33,21 +33,17 @@
 <script>
 import Header from '../components/Header.vue'
 import RadialProgressBar from 'vue-radial-progress'
+import EventBus from '../event-bus';
 export default {
     name: 'ProfilePage',
     components: {
         Header,
         RadialProgressBar
     },
-    props: ['loading', 'profile'],
-    model:{
-        prop: 'loading',
-        event:'load'
-    },
+    props: ['profile'],
     data(){
         return{
-            user:{},
-            errored:false
+            user:{}
         }
     },
     computed: {
@@ -60,12 +56,9 @@ export default {
         }
     },
     methods: {
-        home: function(){
-            this.$router.push({name:'home'});
-        },
         message: function(){
             if(!this.user.messenger){
-                alert("This user didn't provide his contact info");
+                EventBus.$emit('error_popup', "This user didn't provide his contact info");
                 return;
             }
             window.open(this.user.messenger);
@@ -73,17 +66,17 @@ export default {
     },
     mounted(){
         var that = this;
-        that.$emit('load', true);
+        EventBus.$emit('loading', true);
         this.api.post('/user/' + this.$route.params.id)
                 .then((response) => {
                     if(response.data.id){
                         that.user = Object.assign({}, response.data, that.user);
-                    }else that.$emit('error', 'no data received');
+                    } else EventBus.$emit('error_major');
                 })
                 .catch((e) => {
-                    that.$emit('error', e.message);
+                    EventBus.$emit('error_major', e.message);
                 })
-                .finally(function(){that.$emit('load', false);})
+                .finally(function(){EventBus.$emit('loading', false);})
     }
 }
 </script>

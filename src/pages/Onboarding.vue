@@ -1,7 +1,7 @@
 <template>
     <div id="home">
         <Header @return="back" @done="process" :type="'HeaderInit'" :profile="profile" />
-        <component :is="type" @ready="ready" @done="next" @error="errorHandle" ref="content"/>
+        <component :is="type" />
     </div>
 </template>
 
@@ -9,6 +9,7 @@
 import Header from '../components/Header.vue'
 import SelectCategory from '../components/SelectCategory.vue'
 import SelectInterest from '../components/SelectInterest.vue'
+import EventBus from '../event-bus';
 export default {
     name: 'OnboardingPage',
     components: {
@@ -16,33 +17,19 @@ export default {
         SelectCategory,
         SelectInterest
     },
-    props: ['loading', 'profile'],
-    model:{
-        prop: 'loading',
-        event:'load'
-    },
+    props: ['profile'],
     data(){
         return{
-            type:null,
-            done:false
+            type:null
         }
     },
     methods:{
         process: function(){
-            this.$emit('load', true);
-            this.$refs.content.process();
+            EventBus.$emit('loading', true);
+            EventBus.$emit('onboarding_process');
         },
         back: function(){
             this.$router.go(1);
-        },
-        ready: function(){
-            this.$emit('load', false);
-        },
-        next: function(){
-            this.$emit('load', true);
-        },
-        errorHandle: function(e){
-            this.$emit('error_popup', e);
         },
         paramsHandle: function(){
             if(this.$route.params.stage){
@@ -62,30 +49,29 @@ export default {
         }
     },
     mounted(){
-        this.$emit('load', true);
-        if(this.paramsHandle()){
-            return;
-        }
-        var that = this;
+        EventBus.$emit('loading', true);
+        if(this.paramsHandle()) return;
+        let that = this;
         this.api.get('/user')
-                .then((response) => {
-                    if(response.data.categories.length == 0){
-                        that.$router.push({name:'onboarding_specified', params:{stage:'categories'}});
-                    } else if(response.data.subcategories.length == 0){
-                        that.$router.push({name:'onboarding_specified', params:{stage:'interests'}});
-                    } else {
-                        that.$router.push({name: 'home'});
-                    }
-                })
-                .catch((e) => {
-                    that.$emit('error_popup', e.message);
-                })
+            .then((response) => {
+                if(response.data.categories.length == 0){
+                    that.$router.push({name:'onboarding_specified', params:{stage:'categories'}});
+                } else if(response.data.subcategories.length == 0){
+                    that.$router.push({name:'onboarding_specified', params:{stage:'interests'}});
+                } else {
+                    that.$router.push({name: 'home'});
+                }
+            })
+            .catch((e) => {
+                EventBus.$emit('loading', false);
+                EventBus.$emit('error_popup', e.message);
+            })
     },
     watch: {
-    '$route' () {
-        this.paramsHandle();
+        '$route'() {
+            this.paramsHandle();
+        }
     }
-  }
 }
 </script>
 

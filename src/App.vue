@@ -3,9 +3,10 @@
     <transition name="fade">
       <div class="error-container" v-if="errored"><div class="error">THERE WAS AN ERROR<br><br><span>{{errormsg}}</span></div></div>
       <div class="loader-container" v-if="loading && !errored"><div class="loader"></div></div>
+      <div class="overlay" v-if="overlay"></div>
     </transition>
     <transition :name="transitionName">
-      <router-view  v-on:error="errorHandle" v-on:error_popup="errorPopup" v-if="!errored && ready" v-model="loading" :profile="profile"> </router-view>
+      <router-view v-if="!errored && ready" :profile="profile"> </router-view>
     </transition>
     <transition name="er">
         <div v-if="popup_msg" class="errormsg"><span>{{popup_msg}}</span></div>
@@ -14,7 +15,7 @@
 </template>
 
 <script>
-/* eslint-disable */
+import EventBus from './event-bus';
 export default {
   name: 'app',
   data(){
@@ -25,18 +26,26 @@ export default {
       loading:true,
       ready:false,
       transitionName:'slide-left',
-      profile:null
+      profile:null,
+      overlay: false
     }
   },
   methods:{
-    errorHandle: function(e) {
-      this.errormsg = e;
+    handleLoading:function(cl){
+      this.loading = cl;
+    },
+    handleOverlay:function(cl){
+      this.overlay = cl;
+    },
+    errorHandle: function(e = null) {
+      if(e) this.errormsg = e;
+      else this.errormsg = "We have an internal issue :c";
       this.errored = true;
     },
     errorPopup: function(e){
       this.popup_msg=e;
       let that = this;
-      window.setTimeout(()=>{that.popup_msg=null}, 3500);
+      window.setTimeout(()=>{that.popup_msg=null}, 4500);
     },
     refreshData: function(){
       var that = this;
@@ -51,20 +60,30 @@ export default {
               that.profile = Object.assign({}, response.data, that.profile);
             }
           })
-          .catch((e) => {
+          .catch(() => {
             localStorage.removeItem('token');
             localStorage.removeItem('refresh_token');
             this.$router.push({name:'login'});
           })
           .finally(() => {that.ready = true;});
       } else {
-        this.loading = false;
-        this.$router.push({name:'login'});
+        switch(this.$router.currentRoute.name){
+            case 'register':
+            case 'login':
+              break;
+            default:
+              this.$router.push({name:'login'});
+        }
         this.ready = true;
+        this.loading = false;
       }
     }
   },
   mounted(){
+    EventBus.$on('overlay', this.handleOverlay);
+    EventBus.$on('error_major', this.errorHandle);
+    EventBus.$on('error_popup', this.errorPopup);
+    EventBus.$on('loading', this.handleLoading);
     this.refreshData();
   },
   watch: {
@@ -195,6 +214,15 @@ export default {
   margin:0;
   padding:0;
   font-family: 'Baloo Da 2';
+}
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(100,100,100,0.7);
+  z-index:700;
 }
 @include error-styling;
 </style>

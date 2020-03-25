@@ -21,13 +21,9 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 export default {
     name: 'LoginPage',
-    props: ['loading'],
-    model:{
-        prop: 'loading',
-        event:'load'
-    },
     data(){
         return{
             form_loading: false,
@@ -56,14 +52,14 @@ export default {
                                 that.emailStatus = 2;
                                 break;
                             default:
-                                that.$emit('error', 'wrong response from backend');
+                                EventBus.$emit('error_major');
                         }
                     } else {
-                        that.$emit('error', 'no data');
+                        EventBus.$emit('error_major');
                     }
                 })
                 .catch((e) => {
-                    that.$emit('error', e.message);
+                    EventBus.$emit('error_major', e.message);
                 })
         },
         login: function(){
@@ -75,7 +71,7 @@ export default {
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
                         that.$router.push({name:'home'});
-                    } else that.$emit('error_popup', 'We have an internal issue :c');
+                    } else EventBus.$emit('error_major');
                 })
                 .catch((e) => {
                     let err = 'There was an error: ';
@@ -84,7 +80,7 @@ export default {
                     } else {
                         err += e.message;
                     }
-                    that.$emit('error_popup', err);
+                    EventBus.$emit('error_popup', err);
                 })
                 .finally(()=>{that.form_loading = false})
         },

@@ -51,13 +51,10 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 export default {
     name: 'RegisterPage',
-    props: ['loading', 'email', 'password'],
-    model:{
-        prop: 'loading',
-        event:'load'
-    },
+    props: ['email', 'password'],
     data(){
         return{
             name: null,
@@ -67,12 +64,15 @@ export default {
             gender: false,
             link: null,
             emailStatus: 0,
-            form_loading:false,
-            validated:false
+            form_loading: false,
+            validated: false
         }
     },
     methods:{
         checkValidation: function(){
+            if(this.password == null || this.email == null){
+                this.$router.push({name:'login'});
+            }
             this.validated = this.$refs.form.checkValidity();
             return this.validated;
         },
@@ -101,7 +101,31 @@ export default {
             if(this.picture) formData.append('picture', this.picture);
             this.axios.post('/register',formData, {headers: {'Content-Type': 'multipart/form-data'}})
                 .then(() => {
-                    this.login();
+                    that.login();
+                })
+                .catch((e) => {
+                    let err = 'There was an error: ';
+                    if(e.response)
+                        if(e.response.data.error)
+                            err = e.response.data.error;
+                        else err += e.message;
+                    else err += e.message;
+                    EventBus.$emit('error_popup', err);
+                })
+                .finally(() => {
+                    that.form_loading = false;
+                })
+        },
+        login: function(){
+            var that = this;
+            this.form_loading = true;
+            this.axios.post('/login_check',{username: this.email, password: this.password})
+                .then((response) => {
+                    if(response.data.token && response.data.refresh_token){
+                        localStorage.setItem('token', response.data.token);
+                        localStorage.setItem('refresh_token', response.data.refresh_token);
+                        that.$router.push({name:'home'});
+                    } else EventBus.$emit('error_major');
                 })
                 .catch((e) => {
                     let err = 'There was an error: ';
@@ -110,12 +134,14 @@ export default {
                     } else {
                         err += e.message;
                     }
-                    that.$emit('error_popup', err);
+                    EventBus.$emit('error_popup', err);
                 })
-                .finally(() => {
-                    that.form_loading = false;
-                })
+                .finally(()=>{that.form_loading = false})
         }
+        
+    },
+    mounted(){
+        this.checkValidation();
     }
 }
 </script>

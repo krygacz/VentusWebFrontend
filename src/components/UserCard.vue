@@ -20,15 +20,6 @@
 export default {
     name: 'UserCard',
     props: ['card'],
-    model:{
-        prop: 'loading',
-        event:'load'
-    },
-    data(){
-        return{
-            errored:false
-        }
-    },
     methods:{
         profile: function(){
             this.$router.push({name:'profile', params:{id: this.card.id}})
