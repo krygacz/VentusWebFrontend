@@ -70,7 +70,8 @@ export default {
                     if(response.data.token && response.data.refresh_token){
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('refresh_token', response.data.refresh_token);
-                        that.$router.push({name:'home'});
+                        EventBus.$emit('loading', true);
+                        setTimeout(()=>{that.$router.push({name:'home'});}, 100);
                     } else EventBus.$emit('error_major');
                 })
                 .catch((e) => {

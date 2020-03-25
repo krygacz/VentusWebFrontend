@@ -1,12 +1,12 @@
 <template>
   <div id="app">
+    <transition :name="transitionName">
+      <router-view v-if="!errored && ready" :profile="profile"> </router-view>
+    </transition>
     <transition name="fade">
       <div class="error-container" v-if="errored"><div class="error">THERE WAS AN ERROR<br><br><span>{{errormsg}}</span></div></div>
       <div class="loader-container" v-if="loading && !errored"><div class="loader"></div></div>
-      <div class="overlay" v-if="overlay"></div>
-    </transition>
-    <transition :name="transitionName">
-      <router-view v-if="!errored && ready" :profile="profile"> </router-view>
+      <div @click="closeMenu" class="overlay" v-if="overlay"></div>
     </transition>
     <transition name="er">
         <div v-if="popup_msg" class="errormsg"><span>{{popup_msg}}</span></div>
@@ -31,6 +31,9 @@ export default {
     }
   },
   methods:{
+    closeMenu:function(){
+      EventBus.$emit('menu_close');
+    },
     handleLoading:function(cl){
       this.loading = cl;
     },
@@ -221,8 +224,8 @@ export default {
   left:0;
   right:0;
   bottom:0;
-  background:rgba(100,100,100,0.7);
-  z-index:700;
+  background:rgba(240,240,240,0.8);
+  z-index:890;
 }
 @include error-styling;
 </style>
