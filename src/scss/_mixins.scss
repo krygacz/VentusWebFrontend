@@ -317,6 +317,7 @@
     color: $primary_light;
     background-color: white;
     height:100%;
+    max-width:63%;
     box-sizing:border-box;
     font-family:$form_font;
     font-weight:$form_font_weight;
@@ -326,9 +327,12 @@
     padding-left:16px;
     padding-right:16px;
     align-items:center;
-    display:flex;
+    display:block;
     transition:all 300ms;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    line-height:50px;
   }
   .inputfile:focus + label,
   .inputfile + label:hover {
@@ -439,38 +443,6 @@
   }
 }
 
-@mixin error-styling{
-  .errormsg{
-    position:fixed;
-    left:0;
-    right:0;
-    top:0;
-    height:60px;
-    width:100%;
-    display:flex;
-    justify-content: center;
-    align-content: center;
-    background: $error_light;
-    color:white;
-    transition:all 250ms;
-    z-index:99999;
-  }
-  .errormsg > span{
-    position:relative;
-    margin:auto;
-    font-family:$form_font;
-    font-weight:500;
-    font-size:28px;
-  }
-  .er-enter-active, .er-leave-active {
-    height:60px;
-    opacity:1;
-  }
-  .er-enter, .er-leave-to{
-    height:0;
-    opacity:0.5;
-  }
-}
 @mixin error-bottom{
   div.errormsg {
     bottom:0!important;

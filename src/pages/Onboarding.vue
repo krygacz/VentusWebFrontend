@@ -90,8 +90,5 @@ export default {
     padding-top:100px;
 
 }
-
-</style>
-<style lang="scss">
 @include error-bottom;
 </style>

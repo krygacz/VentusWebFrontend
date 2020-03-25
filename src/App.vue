@@ -227,5 +227,45 @@ export default {
   background:rgba(240,240,240,0.8);
   z-index:890;
 }
-@include error-styling;
+.errormsg{
+  position:fixed;
+  left:0;
+  right:0;
+  top:0;
+  height:60px;
+  width:100%;
+  display:flex;
+  justify-content: center;
+  align-content: center;
+  background: $error_light;
+  color:white;
+  transition:all 250ms;
+  z-index:99999;
+}
+.errormsg > span{
+  position:relative;
+  margin:auto;
+  font-family:$form_font;
+  font-weight:500;
+  font-size:28px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  padding-left:25px;
+  padding-right:25px;
+}
+.er-enter-active, .er-leave-active {
+  height:60px;
+  opacity:1;
+}
+.er-enter, .er-leave-to{
+  height:0;
+  opacity:0.5;
+}
+@media screen and (max-width:800px){
+  .errormsg > span{
+    font-size:25px;
+    padding-top:2px;
+  }
+}
 </style>
