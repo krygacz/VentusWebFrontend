@@ -89,14 +89,12 @@ export default {
     justify-content:center;
     position:absolute;
     top:0;
-    left:0;
     right:0;
-    bottom:0;
     padding:40px;
     padding-top:120px;
+    width:50%;
 }
 .profile-container > .details, .profile-container > .hobbies{
-    width:50%;
     box-sizing:border-box;
     height:100%;
     display:flex;
@@ -108,14 +106,23 @@ export default {
     flex-shrink:0;
     min-width:350px;
 }
+.profile-container > .details{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:50%;
+}
 .profile-container > .hobbies{
+    position:relative;
+    width:100%;
     padding:20px;
     padding-left:40px;
-    padding-top:30px;
-    align-items:center;
-    align-content:center;
+    padding-top:20px;
+    padding-bottom:30px;
     justify-items: flex-start;
     justify-content:flex-start;
+    flex:1;
 }
 .hobbies > .progressbar{
     width:90%;
@@ -232,7 +239,7 @@ h1,h2,h3{
     border-radius:80px;
     height:42px;
     min-height:42px;
-    width:100%;
+    width:80%;
     max-width:430px;
     background:$primary_dark;
     color:white;
@@ -240,6 +247,8 @@ h1,h2,h3{
     font-size:17px;
     font-weight:500;
     cursor:pointer;
+    user-select:none;
+    outline:none;
     transition:all 200ms ease-in-out;
 }
 .details #contact:hover{
@@ -247,22 +256,48 @@ h1,h2,h3{
 }
 @media screen and (max-width:850px){
 .profile-container{
+    width:100%;
     display:flex;
     flex-flow: column nowrap;
+    align-content: center;
     align-items: center;
     justify-content:flex-start;
     justify-items:flex-start;
-    padding:20px;
-    padding-top:100px;
+    padding:0px;
+    padding-top:80px;
+    padding-bottom:80px;
 }
 .profile-container > .details, .profile-container > .hobbies{
     max-width:100%;
     width:100%!important;
     height:auto;
+    padding:20px;
+}
+.profile-container > .details{
+    position:relative;
+    left:initial;
+    top:initial;
+    bottom:initial;
+    width:100%;
 }
 .details #contact{
-    margin:50px;
-    width:80vw;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    max-width:100%;
+    min-width:100%;
+    margin:0;
+    border-radius:0;
+    height:70px;
+    z-index:999;
+    font-size:21px;
+    box-sizing:border-box;
+}
+.details #contact:hover{
+    background:white;
+    color:$primary_dark;
+    transform:none;
 }
 }
 </style>
